@@ -14,7 +14,6 @@
     --bg: #0a0f0c;
     --card: #0f1a13;
     --border: rgba(74,222,128,0.18);
-    --border-bright: rgba(74,222,128,0.35);
     --text: #d4f5df;
     --muted: #4a7a5a;
   }
@@ -40,29 +39,6 @@
     pointer-events: none;
   }
 
-  /* TOOLS BUTTON */
-  .tools-btn {
-    position: fixed;
-    top: 16px;
-    left: 16px;
-    padding: 10px 16px;
-    background: rgba(74,222,128,0.08);
-    border: 1px solid var(--border-bright);
-    border-radius: 8px;
-    color: var(--green);
-    font-family: 'Press Start 2P', monospace;
-    font-size: 8px;
-    letter-spacing: 2px;
-    cursor: pointer;
-    transition: all 0.2s;
-    z-index: 100;
-  }
-  .tools-btn:hover {
-    background: rgba(74,222,128,0.16);
-    box-shadow: 0 0 16px rgba(74,222,128,0.15);
-  }
-
-  /* MAIN */
   .wrap {
     position: relative;
     width: 100%;
@@ -84,7 +60,7 @@
 
   .field { display: flex; flex-direction: column; }
 
-  input[type="text"] {
+  input {
     width: 100%;
     background: var(--card);
     border: 1px solid var(--border);
@@ -98,17 +74,17 @@
     transition: border-color 0.2s, box-shadow 0.2s;
     caret-color: var(--green);
   }
-  input[type="text"]::placeholder { color: var(--muted); font-size: 10px; letter-spacing: 2px; }
-  input[type="text"]:focus {
+  input::placeholder { color: var(--muted); font-size: 10px; letter-spacing: 2px; }
+  input:focus {
     border-color: rgba(74,222,128,0.45);
     box-shadow: 0 0 0 3px rgba(74,222,128,0.07);
   }
 
-  .scan-btn {
+  button {
     width: 100%;
     padding: 17px;
     background: rgba(74,222,128,0.1);
-    border: 1px solid var(--border-bright);
+    border: 1px solid rgba(74,222,128,0.35);
     border-top: none;
     border-radius: 0 0 10px 10px;
     color: var(--green);
@@ -118,12 +94,12 @@
     cursor: pointer;
     transition: background 0.2s, box-shadow 0.2s, color 0.2s;
   }
-  .scan-btn:hover:not(:disabled) {
+  button:hover:not(:disabled) {
     background: rgba(74,222,128,0.18);
     box-shadow: 0 0 20px rgba(74,222,128,0.12);
     color: #fff;
   }
-  .scan-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  button:disabled { opacity: 0.45; cursor: not-allowed; }
 
   .inline-err {
     height: 0;
@@ -148,171 +124,47 @@
     animation: up 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
   }
   .result.show { display: flex; }
-  .result.avail { background: rgba(74,222,128,0.06); border: 1px solid rgba(74,222,128,0.28); box-shadow: 0 0 40px rgba(74,222,128,0.07); }
-  .result.taken { background: rgba(248,113,113,0.06); border: 1px solid rgba(248,113,113,0.28); box-shadow: 0 0 40px rgba(248,113,113,0.07); }
+  .result.avail {
+    background: rgba(74,222,128,0.06);
+    border: 1px solid rgba(74,222,128,0.28);
+    box-shadow: 0 0 40px rgba(74,222,128,0.07);
+  }
+  .result.taken {
+    background: rgba(248,113,113,0.06);
+    border: 1px solid rgba(248,113,113,0.28);
+    box-shadow: 0 0 40px rgba(248,113,113,0.07);
+  }
+
   .result-icon { font-size: 40px; line-height: 1; }
-  .result-label { font-family: 'Press Start 2P', monospace; font-size: 11px; letter-spacing: 2px; }
+  .result-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+  }
   .avail .result-label { color: var(--green); text-shadow: 0 0 16px rgba(74,222,128,0.6); }
-  .taken .result-label { color: var(--red); text-shadow: 0 0 16px rgba(248,113,113,0.6); }
+  .taken .result-label { color: var(--red);   text-shadow: 0 0 16px rgba(248,113,113,0.6); }
   .result-name { font-family: 'Press Start 2P', monospace; font-size: 11px; letter-spacing: 2px; color: #fff; }
 
   .dots { display: inline-flex; gap: 5px; align-items: center; }
-  .dot { width: 5px; height: 5px; border-radius: 1px; background: var(--green); animation: pulse 0.7s ease-in-out infinite; }
+  .dot {
+    width: 5px; height: 5px;
+    border-radius: 1px;
+    background: var(--green);
+    animation: pulse 0.7s ease-in-out infinite;
+  }
   .dot:nth-child(2) { animation-delay: 0.15s; }
   .dot:nth-child(3) { animation-delay: 0.3s; }
 
-  @keyframes pulse { 0%,100% { opacity: 0.2; transform: scaleY(0.5); } 50% { opacity: 1; transform: scaleY(1.3); } }
-  @keyframes up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  @keyframes popIn { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-  /* SHARED OVERLAY */
-  .overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.88);
-    backdrop-filter: blur(8px);
-    z-index: 200;
-    align-items: center;
-    justify-content: center;
-    animation: fadeIn 0.25s ease;
-    padding: 20px;
+  @keyframes pulse {
+    0%,100% { opacity: 0.2; transform: scaleY(0.5); }
+    50% { opacity: 1; transform: scaleY(1.3); }
   }
-  .overlay.show { display: flex; }
-
-  .popup {
-    background: #0f1a13;
-    border: 1px solid var(--border-bright);
-    border-radius: 16px;
-    padding: 32px 28px;
-    width: 100%;
-    max-width: 520px;
-    max-height: 85vh;
-    overflow-y: auto;
-    box-shadow: 0 0 80px rgba(0,0,0,0.9);
-    animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
-    position: relative;
+  @keyframes up {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
 
-  .popup-title {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 11px;
-    color: var(--green);
-    letter-spacing: 2px;
-    margin-bottom: 24px;
-    text-shadow: 0 0 16px rgba(74,222,128,0.4);
-  }
-
-  .close-btn {
-    position: absolute;
-    top: 16px;
-    right: 16px;
-    background: rgba(74,222,128,0.08);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: var(--muted);
-    font-family: 'Press Start 2P', monospace;
-    font-size: 8px;
-    padding: 8px 10px;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .close-btn:hover { color: var(--green); border-color: var(--border-bright); }
-
-  /* TOOLS MENU */
-  .tool-list { display: flex; flex-direction: column; gap: 12px; }
-  .tool-item {
-    padding: 18px 20px;
-    background: rgba(74,222,128,0.04);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .tool-item:hover { border-color: var(--border-bright); background: rgba(74,222,128,0.08); box-shadow: 0 0 16px rgba(74,222,128,0.06); }
-  .tool-name { font-family: 'Press Start 2P', monospace; font-size: 9px; color: var(--green); letter-spacing: 1px; margin-bottom: 6px; }
-  .tool-desc { font-size: 11px; color: var(--muted); letter-spacing: 1px; }
-  .tool-arrow { color: var(--muted); font-size: 16px; }
-
-  /* BULK CHECK */
-  .bulk-textarea {
-    width: 100%;
-    height: 160px;
-    background: rgba(0,0,0,0.4);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 14px 16px;
-    color: #fff;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    letter-spacing: 2px;
-    outline: none;
-    resize: none;
-    margin-bottom: 14px;
-    transition: border-color 0.2s;
-    caret-color: var(--green);
-  }
-  .bulk-textarea:focus { border-color: var(--border-bright); }
-  .bulk-textarea::placeholder { color: var(--muted); font-size: 11px; }
-
-  .bulk-meta { font-size: 11px; color: var(--muted); letter-spacing: 1px; margin-bottom: 14px; }
-
-  .action-btn {
-    width: 100%;
-    padding: 15px;
-    background: rgba(74,222,128,0.1);
-    border: 1px solid var(--border-bright);
-    border-radius: 10px;
-    color: var(--green);
-    font-family: 'Press Start 2P', monospace;
-    font-size: 9px;
-    letter-spacing: 2px;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-bottom: 20px;
-  }
-  .action-btn:hover:not(:disabled) { background: rgba(74,222,128,0.18); color: #fff; }
-  .action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  .bulk-results { display: flex; flex-direction: column; gap: 8px; }
-  .bulk-result-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 10px 14px;
-    border-radius: 8px;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 9px;
-    letter-spacing: 1px;
-  }
-  .bulk-result-item.avail { background: rgba(74,222,128,0.06); border: 1px solid rgba(74,222,128,0.2); color: var(--green); }
-  .bulk-result-item.taken { background: rgba(248,113,113,0.05); border: 1px solid rgba(248,113,113,0.15); color: #f87171; }
-  .bulk-result-item.checking { background: rgba(74,222,128,0.02); border: 1px solid var(--border); color: var(--muted); }
-  .bulk-progress { font-size: 10px; color: var(--muted); letter-spacing: 1px; margin-bottom: 12px; }
-
-  /* WORD FINDER */
-  .word-results { display: flex; flex-direction: column; gap: 10px; margin-top: 4px; }
-  .word-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 14px 18px;
-    background: rgba(74,222,128,0.06);
-    border: 1px solid rgba(74,222,128,0.25);
-    border-radius: 10px;
-    animation: up 0.3s ease both;
-  }
-  .word-name { font-family: 'Press Start 2P', monospace; font-size: 11px; color: var(--green); letter-spacing: 2px; }
-  .word-badge { font-size: 18px; }
-  .word-status { font-size: 10px; color: var(--muted); letter-spacing: 1px; margin-top: 2px; }
-  .word-info { display: flex; flex-direction: column; }
-  .word-finding { font-size: 11px; color: var(--muted); letter-spacing: 2px; text-align: center; padding: 20px 0; }
-
-  /* AD */
+  /* INTERSTITIAL AD */
   .ad-overlay {
     display: none;
     position: fixed;
@@ -325,6 +177,8 @@
     animation: fadeIn 0.3s ease;
   }
   .ad-overlay.show { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
   .ad-box {
     background: #0f1a13;
     border: 1px solid rgba(74,222,128,0.22);
@@ -336,6 +190,11 @@
     box-shadow: 0 0 80px rgba(0,0,0,0.9);
     animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
   }
+  @keyframes popIn {
+    from { transform: scale(0.92); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
+  }
+
   .ad-slot {
     width: 100%;
     min-height: 320px;
@@ -351,6 +210,7 @@
     font-size: 11px;
     letter-spacing: 2px;
   }
+
   .ad-close {
     width: 100%;
     padding: 16px;
@@ -366,22 +226,38 @@
   }
   .ad-close:hover:not(:disabled) { background: rgba(74,222,128,0.18); }
   .ad-close:disabled { opacity: 0.35; cursor: not-allowed; }
-  .ad-timer { font-family: 'Press Start 2P', monospace; font-size: 18px; color: var(--green); margin-top: 14px; letter-spacing: 2px; min-height: 40px; }
+
+  .ad-timer {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 18px;
+    color: var(--green);
+    margin-top: 14px;
+    letter-spacing: 2px;
+    min-height: 40px;
+  }
 </style>
 </head>
 <body>
 
-<!-- TOOLS BUTTON -->
-<button class="tools-btn" onclick="openTools()">⚙ TOOLS</button>
-
-<!-- MAIN -->
 <div class="wrap">
   <h1>Check Minecraft<br>Usernames</h1>
+
   <div class="field">
-    <input type="text" id="inp" placeholder="username..." maxlength="16" autocomplete="off" spellcheck="false" oninput="onType()" onkeydown="if(event.key==='Enter')check()">
-    <button class="scan-btn" id="btn" onclick="check()">SCAN USERNAME</button>
+    <input
+      id="inp"
+      type="text"
+      placeholder="username..."
+      maxlength="16"
+      autocomplete="off"
+      spellcheck="false"
+      oninput="onType()"
+      onkeydown="if(event.key==='Enter')check()"
+    >
+    <button id="btn" onclick="check()">SCAN USERNAME</button>
   </div>
+
   <div class="inline-err" id="err"></div>
+
   <div class="result" id="result">
     <div class="result-icon" id="icon"></div>
     <div class="result-label" id="label"></div>
@@ -389,54 +265,7 @@
   </div>
 </div>
 
-<!-- TOOLS MENU POPUP -->
-<div class="overlay" id="toolsOverlay">
-  <div class="popup">
-    <button class="close-btn" onclick="closeOverlay('toolsOverlay')">✕ CLOSE</button>
-    <div class="popup-title">⚙ TOOLS</div>
-    <div class="tool-list">
-      <div class="tool-item" onclick="openBulk()">
-        <div>
-          <div class="tool-name">BULK CHECK</div>
-          <div class="tool-desc">Paste up to 100 usernames, get available ones back</div>
-        </div>
-        <div class="tool-arrow">›</div>
-      </div>
-      <div class="tool-item" onclick="openWordFinder()">
-        <div>
-          <div class="tool-name">WORD FINDER</div>
-          <div class="tool-desc">Find real English words available as Minecraft usernames</div>
-        </div>
-        <div class="tool-arrow">›</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- BULK CHECK POPUP -->
-<div class="overlay" id="bulkOverlay">
-  <div class="popup">
-    <button class="close-btn" onclick="closeOverlay('bulkOverlay')">✕ CLOSE</button>
-    <div class="popup-title">BULK CHECK</div>
-    <textarea class="bulk-textarea" id="bulkInput" placeholder="Paste usernames here, one per line...&#10;&#10;Steve&#10;Notch&#10;Dream"></textarea>
-    <div class="bulk-meta" id="bulkMeta">0 usernames — max 100</div>
-    <button class="action-btn" id="bulkBtn" onclick="runBulk()">▶ CHECK ALL</button>
-    <div class="bulk-progress" id="bulkProgress"></div>
-    <div class="bulk-results" id="bulkResults"></div>
-  </div>
-</div>
-
-<!-- WORD FINDER POPUP -->
-<div class="overlay" id="wordOverlay">
-  <div class="popup">
-    <button class="close-btn" onclick="closeOverlay('wordOverlay')">✕ CLOSE</button>
-    <div class="popup-title">WORD FINDER</div>
-    <button class="action-btn" id="wordBtn" onclick="runWordFinder()">▶ GENERATE</button>
-    <div class="word-results" id="wordResults"></div>
-  </div>
-</div>
-
-<!-- AD OVERLAY -->
+<!-- INTERSTITIAL AD OVERLAY -->
 <div class="ad-overlay" id="adOverlay">
   <div class="ad-box">
     <div class="ad-slot">YOUR AD HERE</div>
@@ -446,7 +275,6 @@
 </div>
 
 <script>
-  // ── MAIN CHECKER ──
   const inp    = document.getElementById('inp');
   const btn    = document.getElementById('btn');
   const errEl  = document.getElementById('err');
@@ -454,11 +282,20 @@
   const icon   = document.getElementById('icon');
   const label  = document.getElementById('label');
   const rname  = document.getElementById('rname');
-  let searchCount = 0;
-  const AD_EVERY = 10;
 
-  function onType() { setErr(''); result.className = 'result'; }
-  function setErr(msg) { errEl.textContent = msg; errEl.classList.toggle('show', !!msg); }
+  let searchCount = 0;
+  const AD_EVERY  = 10;
+
+  function onType() {
+    setErr('');
+    result.className = 'result';
+  }
+
+  function setErr(msg) {
+    errEl.textContent = msg;
+    errEl.classList.toggle('show', !!msg);
+  }
+
   function validate(u) {
     if (!u) return 'Enter a username.';
     if (u.length < 3 || u.length > 16) return 'Must be 3–16 characters.';
@@ -471,195 +308,67 @@
     const u = inp.value.trim();
     const err = validate(u);
     if (err) { setErr(err); return; }
+
     btn.disabled = true;
     btn.innerHTML = '<span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>';
     result.className = 'result';
     setErr('');
+
     try {
       const res  = await fetch(`/api/check?username=${encodeURIComponent(u)}`);
       const data = await res.json();
+
       if (data.available === true) {
-        result.className = 'result avail show';
-        icon.textContent = '✅'; label.textContent = 'AVAILABLE'; rname.textContent = u;
+        result.className  = 'result avail show';
+        icon.textContent  = '✅';
+        label.textContent = 'AVAILABLE';
+        rname.textContent = u;
       } else if (data.available === false) {
-        result.className = 'result taken show';
-        icon.textContent = '❌'; label.textContent = 'TAKEN'; rname.textContent = u;
-      } else { setErr(data.error || 'Something went wrong.'); }
+        result.className  = 'result taken show';
+        icon.textContent  = '❌';
+        label.textContent = 'TAKEN';
+        rname.textContent = u;
+      } else {
+        setErr(data.error || 'Something went wrong. Try again.');
+      }
+
       searchCount++;
       if (searchCount % AD_EVERY === 0) showAd();
-    } catch { setErr('Network error — try again.'); }
-    finally { btn.disabled = false; btn.textContent = 'SCAN USERNAME'; }
-  }
 
-  // ── OVERLAYS ──
-  function openTools() { document.getElementById('toolsOverlay').classList.add('show'); }
-  function openBulk() { closeOverlay('toolsOverlay'); document.getElementById('bulkOverlay').classList.add('show'); }
-  function openWordFinder() { closeOverlay('toolsOverlay'); document.getElementById('wordOverlay').classList.add('show'); }
-  function closeOverlay(id) { document.getElementById(id).classList.remove('show'); }
-
-  // close on backdrop click
-  document.querySelectorAll('.overlay').forEach(o => {
-    o.addEventListener('click', e => { if (e.target === o) o.classList.remove('show'); });
-  });
-
-  // ── BULK CHECK ──
-  const bulkInput = document.getElementById('bulkInput');
-  bulkInput.addEventListener('input', () => {
-    const names = parseBulk();
-    document.getElementById('bulkMeta').textContent = `${Math.min(names.length, 100)} username${names.length !== 1 ? 's' : ''} — max 100`;
-  });
-
-  function parseBulk() {
-    return bulkInput.value.split('\n').map(l => l.trim()).filter(l => l.length > 0).slice(0, 100);
-  }
-
-  let bulkRunning = false;
-  async function runBulk() {
-    if (bulkRunning) return;
-    const names = parseBulk();
-    if (!names.length) return;
-
-    bulkRunning = true;
-    document.getElementById('bulkBtn').disabled = true;
-    document.getElementById('bulkResults').innerHTML = '';
-    document.getElementById('bulkProgress').textContent = '';
-
-    const resultsEl = document.getElementById('bulkResults');
-    const progressEl = document.getElementById('bulkProgress');
-
-    // render placeholders
-    names.forEach(name => {
-      const el = document.createElement('div');
-      el.className = 'bulk-result-item checking';
-      el.id = `bulk-${name}`;
-      el.innerHTML = `<span>⋯</span><span>${name}</span>`;
-      resultsEl.appendChild(el);
-    });
-
-    let done = 0;
-    for (const name of names) {
-      const el = document.getElementById(`bulk-${name}`);
-      const err = validate(name);
-      if (err) {
-        el.className = 'bulk-result-item taken';
-        el.innerHTML = `<span>⚠</span><span>${name} — invalid</span>`;
-      } else {
-        try {
-          const res  = await fetch(`/api/check?username=${encodeURIComponent(name)}`);
-          const data = await res.json();
-          if (data.available === true) {
-            el.className = 'bulk-result-item avail';
-            el.innerHTML = `<span>✅</span><span>${name}</span>`;
-          } else {
-            el.className = 'bulk-result-item taken';
-            el.innerHTML = `<span>❌</span><span>${name}</span>`;
-          }
-        } catch {
-          el.className = 'bulk-result-item taken';
-          el.innerHTML = `<span>⚠</span><span>${name} — error</span>`;
-        }
-      }
-      done++;
-      progressEl.textContent = `${done} / ${names.length} checked`;
-      await sleep(1200);
+    } catch {
+      setErr('Network error — try again.');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'SCAN USERNAME';
     }
-
-    bulkRunning = false;
-    document.getElementById('bulkBtn').disabled = false;
-    progressEl.textContent = `Done — ${done} checked`;
   }
 
-  // ── WORD FINDER ──
-  // Common real English words 3-16 chars that could be cool Minecraft usernames
-  const wordPool = [
-    'void','blade','storm','frost','ember','flint','grove','haven','iron','jade',
-    'lance','mist','noble','onyx','pearl','quartz','raven','sage','titan','ultra',
-    'venom','wrath','xenon','yarn','zeal','amber','blaze','cedar','delta','eagle',
-    'falcon','ghost','haze','ivory','jewel','karma','lunar','maple','nectar','orbit',
-    'pixel','quest','ridge','scout','thorn','urban','vigor','willow','xenith','zenith',
-    'abyss','brine','crest','drift','epoch','flare','glyph','haven','indie','joust',
-    'knave','lumen','marsh','nexus','ozone','prism','quirk','realm','spark','talon',
-    'umbra','viper','whirl','xylem','youth','zappy','azure','brawl','crisp','dusk',
-    'elder','fable','graft','haven','inlet','joker','kudos','lyric','manor','nymph',
-    'obsid','prowl','quota','recon','shelf','tiger','unity','vault','witch','xray',
-    'yield','zippy','acorn','birch','cliff','dover','ether','fjord','grail','helix',
-    'igloo','jaded','knelt','lofty','moose','north','otter','plumb','queen','rover',
-    'snowy','trove','ulcer','valve','wedge','xylo','yodel','zebra','alpha','bravo',
-    'cobra','delta','eagle','foxtrot','gamma','hotel','india','juliet','kilo','lima',
-    'micro','nano','omega','prime','rogue','sigma','turbo','ultra','vector','warden',
-    'exile','forge','gloom','haven','isle','jinx','kneel','lurk','myth','neon',
-    'oracle','phantom','quill','rebel','shade','tundra','umber','vale','wolf','xeno'
-  ];
-
-  let wordRunning = false;
-  async function runWordFinder() {
-    if (wordRunning) return;
-    wordRunning = true;
-    const btn = document.getElementById('wordBtn');
-    btn.disabled = true;
-    btn.textContent = 'SEARCHING...';
-
-    const resultsEl = document.getElementById('wordResults');
-    resultsEl.innerHTML = '<div class="word-finding">Searching for available words...</div>';
-
-    const shuffled = [...wordPool].sort(() => Math.random() - 0.5);
-    const found = [];
-
-    for (const word of shuffled) {
-      if (found.length >= 3) break;
-      if (word.length < 3 || word.length > 16) continue;
-      try {
-        const res  = await fetch(`/api/check?username=${encodeURIComponent(word)}`);
-        const data = await res.json();
-        if (data.available === true) found.push(word);
-      } catch { /* skip */ }
-      await sleep(1200);
-    }
-
-    resultsEl.innerHTML = '';
-    if (found.length === 0) {
-      resultsEl.innerHTML = '<div class="word-finding">None found — try again</div>';
-    } else {
-      found.forEach((w, i) => {
-        const el = document.createElement('div');
-        el.className = 'word-item';
-        el.style.animationDelay = `${i * 0.1}s`;
-        el.innerHTML = `
-          <div class="word-info">
-            <div class="word-name">${w}</div>
-            <div class="word-status">AVAILABLE</div>
-          </div>
-          <div class="word-badge">✅</div>
-        `;
-        resultsEl.appendChild(el);
-      });
-    }
-
-    wordRunning = false;
-    btn.disabled = false;
-    btn.textContent = '▶ GENERATE AGAIN';
-  }
-
-  // ── HELPERS ──
-  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-
-  // ── AD ──
   function showAd() {
     const overlay  = document.getElementById('adOverlay');
     const closeBtn = document.getElementById('adClose');
     const timerEl  = document.getElementById('adTimer');
-    const WAIT = 5;
+    const WAIT     = 5;
+
     overlay.classList.add('show');
-    closeBtn.disabled = true;
+    closeBtn.disabled   = true;
     timerEl.textContent = `${WAIT}s`;
+
     let left = WAIT;
     const t = setInterval(() => {
       left--;
-      if (left <= 0) { clearInterval(t); closeBtn.disabled = false; timerEl.textContent = ''; }
-      else { timerEl.textContent = `${left}s`; }
+      if (left <= 0) {
+        clearInterval(t);
+        closeBtn.disabled   = false;
+        timerEl.textContent = '';
+      } else {
+        timerEl.textContent = `${left}s`;
+      }
     }, 1000);
   }
-  function closeAd() { document.getElementById('adOverlay').classList.remove('show'); }
+
+  function closeAd() {
+    document.getElementById('adOverlay').classList.remove('show');
+  }
 </script>
 </body>
 </html>
