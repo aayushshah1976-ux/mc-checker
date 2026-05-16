@@ -66,15 +66,15 @@
     border: 1px solid var(--border);
     border-radius: 10px 10px 0 0;
     padding: 18px 20px;
-    color: var(--text);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 20px;
+    color: #fff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 13px;
     letter-spacing: 3px;
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
     caret-color: var(--green);
   }
-  input::placeholder { color: var(--muted); font-size: 14px; letter-spacing: 2px; }
+  input::placeholder { color: var(--muted); font-size: 10px; letter-spacing: 2px; }
   input:focus {
     border-color: rgba(74,222,128,0.45);
     box-shadow: 0 0 0 3px rgba(74,222,128,0.07);
@@ -143,7 +143,7 @@
   }
   .avail .result-label { color: var(--green); text-shadow: 0 0 16px rgba(74,222,128,0.6); }
   .taken .result-label { color: var(--red);   text-shadow: 0 0 16px rgba(248,113,113,0.6); }
-  .result-name { font-family: 'Press Start 2P', monospace; font-size: 13px; letter-spacing: 3px; color: #fff; }
+  .result-name { font-family: 'Press Start 2P', monospace; font-size: 11px; letter-spacing: 2px; color: #fff; }
 
   .dots { display: inline-flex; gap: 5px; align-items: center; }
   .dot {
@@ -268,9 +268,7 @@
 <!-- INTERSTITIAL AD OVERLAY -->
 <div class="ad-overlay" id="adOverlay">
   <div class="ad-box">
-    <!-- REPLACE THIS WITH YOUR ACTUAL AD -->
     <div class="ad-slot">YOUR AD HERE</div>
-
     <button class="ad-close" id="adClose" onclick="closeAd()" disabled>CLOSE AD</button>
     <div class="ad-timer" id="adTimer"></div>
   </div>
