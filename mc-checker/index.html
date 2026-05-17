@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Check Minecraft Usernames</title>
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4851899222923957" crossorigin="anonymous"></script>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -15,6 +14,7 @@
     --bg: #0a0f0c;
     --card: #0f1a13;
     --border: rgba(74,222,128,0.18);
+    --border-bright: rgba(74,222,128,0.35);
     --text: #d4f5df;
     --muted: #4a7a5a;
   }
@@ -40,132 +40,284 @@
     pointer-events: none;
   }
 
+  .tools-btn {
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    padding: 12px 20px;
+    background: rgba(74,222,128,0.08);
+    border: 1px solid var(--border-bright);
+    border-radius: 8px;
+    color: var(--green);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 100;
+  }
+  .tools-btn:hover { background: rgba(74,222,128,0.16); box-shadow: 0 0 16px rgba(74,222,128,0.15); }
+
   .wrap {
     position: relative;
     width: 100%;
-    max-width: 420px;
+    max-width: 460px;
     display: flex;
     flex-direction: column;
   }
 
   h1 {
     font-family: 'Press Start 2P', monospace;
-    font-size: clamp(11px, 3vw, 15px);
+    font-size: clamp(14px, 3vw, 20px);
     color: var(--green);
     text-align: center;
     line-height: 1.8;
-    margin-bottom: 32px;
+    margin-bottom: 36px;
     text-shadow: 0 0 24px rgba(74,222,128,0.5);
     letter-spacing: 1px;
   }
 
   .field { display: flex; flex-direction: column; }
 
-  input {
+  input[type="text"] {
     width: 100%;
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 10px 10px 0 0;
-    padding: 18px 20px;
+    padding: 20px 22px;
     color: #fff;
     font-family: 'Press Start 2P', monospace;
-    font-size: 13px;
+    font-size: 15px;
     letter-spacing: 3px;
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
     caret-color: var(--green);
   }
-  input::placeholder { color: var(--muted); font-size: 10px; letter-spacing: 2px; }
-  input:focus {
-    border-color: rgba(74,222,128,0.45);
-    box-shadow: 0 0 0 3px rgba(74,222,128,0.07);
-  }
+  input[type="text"]::placeholder { color: var(--muted); font-size: 12px; letter-spacing: 2px; }
+  input[type="text"]:focus { border-color: rgba(74,222,128,0.45); box-shadow: 0 0 0 3px rgba(74,222,128,0.07); }
 
-  button {
+  .scan-btn {
     width: 100%;
-    padding: 17px;
+    padding: 20px;
     background: rgba(74,222,128,0.1);
-    border: 1px solid rgba(74,222,128,0.35);
+    border: 1px solid var(--border-bright);
     border-top: none;
     border-radius: 0 0 10px 10px;
     color: var(--green);
     font-family: 'Press Start 2P', monospace;
-    font-size: 10px;
+    font-size: 13px;
     letter-spacing: 2px;
     cursor: pointer;
     transition: background 0.2s, box-shadow 0.2s, color 0.2s;
   }
-  button:hover:not(:disabled) {
-    background: rgba(74,222,128,0.18);
-    box-shadow: 0 0 20px rgba(74,222,128,0.12);
-    color: #fff;
-  }
-  button:disabled { opacity: 0.45; cursor: not-allowed; }
+  .scan-btn:hover:not(:disabled) { background: rgba(74,222,128,0.18); box-shadow: 0 0 20px rgba(74,222,128,0.12); color: #fff; }
+  .scan-btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
   .inline-err {
     height: 0;
     overflow: hidden;
-    font-size: 11px;
+    font-size: 14px;
     letter-spacing: 1.5px;
     color: var(--red);
-    margin-top: 10px;
+    margin-top: 12px;
     padding: 0 4px;
     transition: height 0.2s;
+    font-family: 'Share Tech Mono', monospace;
   }
-  .inline-err.show { height: 18px; }
+  .inline-err.show { height: 22px; }
 
   .result {
     margin-top: 24px;
     border-radius: 12px;
-    padding: 28px 24px;
+    padding: 32px 28px;
     text-align: center;
     display: none;
     flex-direction: column;
-    gap: 10px;
+    gap: 14px;
     animation: up 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
   }
   .result.show { display: flex; }
-  .result.avail {
-    background: rgba(74,222,128,0.06);
-    border: 1px solid rgba(74,222,128,0.28);
-    box-shadow: 0 0 40px rgba(74,222,128,0.07);
-  }
-  .result.taken {
-    background: rgba(248,113,113,0.06);
-    border: 1px solid rgba(248,113,113,0.28);
-    box-shadow: 0 0 40px rgba(248,113,113,0.07);
-  }
-
-  .result-icon { font-size: 40px; line-height: 1; }
-  .result-label {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 11px;
-    letter-spacing: 2px;
-  }
+  .result.avail { background: rgba(74,222,128,0.06); border: 1px solid rgba(74,222,128,0.28); box-shadow: 0 0 40px rgba(74,222,128,0.07); }
+  .result.taken { background: rgba(248,113,113,0.06); border: 1px solid rgba(248,113,113,0.28); box-shadow: 0 0 40px rgba(248,113,113,0.07); }
+  .result-icon { font-size: 48px; line-height: 1; }
+  .result-label { font-family: 'Press Start 2P', monospace; font-size: 16px; letter-spacing: 2px; }
   .avail .result-label { color: var(--green); text-shadow: 0 0 16px rgba(74,222,128,0.6); }
-  .taken .result-label { color: var(--red);   text-shadow: 0 0 16px rgba(248,113,113,0.6); }
-  .result-name { font-family: 'Press Start 2P', monospace; font-size: 11px; letter-spacing: 2px; color: #fff; }
+  .taken .result-label { color: var(--red); text-shadow: 0 0 16px rgba(248,113,113,0.6); }
+  .result-name { font-family: 'Press Start 2P', monospace; font-size: 14px; letter-spacing: 3px; color: #fff; }
 
-  .dots { display: inline-flex; gap: 5px; align-items: center; }
-  .dot {
-    width: 5px; height: 5px;
-    border-radius: 1px;
-    background: var(--green);
-    animation: pulse 0.7s ease-in-out infinite;
-  }
+  .dots { display: inline-flex; gap: 6px; align-items: center; }
+  .dot { width: 6px; height: 6px; border-radius: 1px; background: var(--green); animation: pulse 0.7s ease-in-out infinite; }
   .dot:nth-child(2) { animation-delay: 0.15s; }
   .dot:nth-child(3) { animation-delay: 0.3s; }
 
-  @keyframes pulse {
-    0%,100% { opacity: 0.2; transform: scaleY(0.5); }
-    50% { opacity: 1; transform: scaleY(1.3); }
+  @keyframes pulse { 0%,100% { opacity: 0.2; transform: scaleY(0.5); } 50% { opacity: 1; transform: scaleY(1.3); } }
+  @keyframes up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes popIn { from { transform: scale(0.92); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.88);
+    backdrop-filter: blur(8px);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.25s ease;
+    padding: 20px;
   }
-  @keyframes up {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
+  .overlay.show { display: flex; }
+
+  .popup {
+    background: #0f1a13;
+    border: 1px solid var(--border-bright);
+    border-radius: 16px;
+    padding: 36px 32px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 85vh;
+    overflow-y: auto;
+    box-shadow: 0 0 80px rgba(0,0,0,0.9);
+    animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+    position: relative;
   }
 
-  /* INTERSTITIAL AD */
+  .popup-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 16px;
+    color: var(--green);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    text-shadow: 0 0 16px rgba(74,222,128,0.4);
+  }
+
+  .popup-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    margin-bottom: 28px;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    background: rgba(74,222,128,0.08);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--muted);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .close-btn:hover { color: var(--green); border-color: var(--border-bright); }
+
+  .tool-list { display: flex; flex-direction: column; gap: 14px; }
+  .tool-item {
+    padding: 22px 24px;
+    background: rgba(74,222,128,0.04);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .tool-item:hover { border-color: var(--border-bright); background: rgba(74,222,128,0.08); box-shadow: 0 0 16px rgba(74,222,128,0.06); }
+  .tool-name { font-family: 'Press Start 2P', monospace; font-size: 12px; color: var(--green); letter-spacing: 1px; margin-bottom: 8px; }
+  .tool-desc { font-size: 14px; color: var(--muted); letter-spacing: 1px; }
+  .tool-arrow { color: var(--muted); font-size: 22px; }
+
+  .bulk-textarea {
+    width: 100%;
+    height: 180px;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    color: #fff;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 16px;
+    letter-spacing: 2px;
+    outline: none;
+    resize: none;
+    margin-bottom: 14px;
+    transition: border-color 0.2s;
+    caret-color: var(--green);
+  }
+  .bulk-textarea:focus { border-color: var(--border-bright); }
+  .bulk-textarea::placeholder { color: var(--muted); font-size: 14px; }
+
+  .bulk-meta { font-size: 14px; color: var(--muted); letter-spacing: 1px; margin-bottom: 16px; font-family: 'Share Tech Mono', monospace; }
+
+  .action-btn {
+    width: 100%;
+    padding: 18px;
+    background: rgba(74,222,128,0.1);
+    border: 1px solid var(--border-bright);
+    border-radius: 10px;
+    color: var(--green);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 20px;
+  }
+  .action-btn:hover:not(:disabled) { background: rgba(74,222,128,0.18); color: #fff; }
+  .action-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  .bulk-results { display: flex; flex-direction: column; gap: 10px; }
+  .bulk-result-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border-radius: 8px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+  .bulk-result-item.avail { background: rgba(74,222,128,0.06); border: 1px solid rgba(74,222,128,0.2); color: var(--green); }
+  .bulk-result-item.taken { background: rgba(248,113,113,0.05); border: 1px solid rgba(248,113,113,0.15); color: #f87171; }
+  .bulk-result-item.checking { background: rgba(74,222,128,0.02); border: 1px solid var(--border); color: var(--muted); }
+  .bulk-progress { font-size: 14px; color: var(--muted); letter-spacing: 1px; margin-bottom: 14px; font-family: 'Share Tech Mono', monospace; }
+
+  /* NAME GENERATOR */
+  .gen-results { display: flex; flex-direction: column; gap: 12px; }
+  .gen-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px;
+    background: rgba(74,222,128,0.04);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    animation: up 0.3s ease both;
+    transition: border-color 0.2s;
+  }
+  .gen-item:hover { border-color: var(--border-bright); }
+  .gen-name { font-family: 'Press Start 2P', monospace; font-size: 13px; color: #fff; letter-spacing: 2px; }
+  .gen-copy {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 1px;
+  }
+  .gen-copy:hover { color: var(--green); border-color: var(--border-bright); }
+
+  /* AD */
   .ad-overlay {
     display: none;
     position: fixed;
@@ -178,8 +330,6 @@
     animation: fadeIn 0.3s ease;
   }
   .ad-overlay.show { display: flex; }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
   .ad-box {
     background: #0f1a13;
     border: 1px solid rgba(74,222,128,0.22);
@@ -191,11 +341,6 @@
     box-shadow: 0 0 80px rgba(0,0,0,0.9);
     animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
   }
-  @keyframes popIn {
-    from { transform: scale(0.92); opacity: 0; }
-    to   { transform: scale(1);    opacity: 1; }
-  }
-
   .ad-slot {
     width: 100%;
     min-height: 320px;
@@ -208,57 +353,38 @@
     margin-bottom: 20px;
     color: var(--muted);
     font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
+    font-size: 14px;
     letter-spacing: 2px;
   }
-
   .ad-close {
     width: 100%;
-    padding: 16px;
+    padding: 18px;
     background: rgba(74,222,128,0.08);
     border: 1px solid rgba(74,222,128,0.3);
     border-radius: 10px;
     color: var(--green);
     font-family: 'Press Start 2P', monospace;
-    font-size: 9px;
+    font-size: 12px;
     letter-spacing: 2px;
     cursor: pointer;
     transition: background 0.2s;
   }
   .ad-close:hover:not(:disabled) { background: rgba(74,222,128,0.18); }
   .ad-close:disabled { opacity: 0.35; cursor: not-allowed; }
-
-  .ad-timer {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 18px;
-    color: var(--green);
-    margin-top: 14px;
-    letter-spacing: 2px;
-    min-height: 40px;
-  }
+  .ad-timer { font-family: 'Press Start 2P', monospace; font-size: 20px; color: var(--green); margin-top: 14px; letter-spacing: 2px; min-height: 40px; }
 </style>
 </head>
 <body>
 
+<button class="tools-btn" onclick="openTools()">⚙ TOOLS</button>
+
 <div class="wrap">
   <h1>Check Minecraft<br>Usernames</h1>
-
   <div class="field">
-    <input
-      id="inp"
-      type="text"
-      placeholder="username..."
-      maxlength="16"
-      autocomplete="off"
-      spellcheck="false"
-      oninput="onType()"
-      onkeydown="if(event.key==='Enter')check()"
-    >
-    <button id="btn" onclick="check()">SCAN USERNAME</button>
+    <input type="text" id="inp" placeholder="username..." maxlength="16" autocomplete="off" spellcheck="false" oninput="onType()" onkeydown="if(event.key==='Enter')check()">
+    <button class="scan-btn" id="btn" onclick="check()">SCAN USERNAME</button>
   </div>
-
   <div class="inline-err" id="err"></div>
-
   <div class="result" id="result">
     <div class="result-icon" id="icon"></div>
     <div class="result-label" id="label"></div>
@@ -266,7 +392,57 @@
   </div>
 </div>
 
-<!-- INTERSTITIAL AD OVERLAY -->
+<!-- TOOLS MENU -->
+<div class="overlay" id="toolsOverlay">
+  <div class="popup">
+    <button class="close-btn" onclick="closeOverlay('toolsOverlay')">✕ CLOSE</button>
+    <div class="popup-title">⚙ TOOLS</div>
+    <div class="popup-sub">Extra tools to help you find the perfect username.</div>
+    <div class="tool-list">
+      <div class="tool-item" onclick="openBulk()">
+        <div>
+          <div class="tool-name">BULK CHECK</div>
+          <div class="tool-desc">Check up to 100 usernames at once</div>
+        </div>
+        <div class="tool-arrow">›</div>
+      </div>
+      <div class="tool-item" onclick="openNameGen()">
+        <div>
+          <div class="tool-name">NAME GENERATOR</div>
+          <div class="tool-desc">Generate random Minecraft-style usernames</div>
+        </div>
+        <div class="tool-arrow">›</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BULK CHECK -->
+<div class="overlay" id="bulkOverlay">
+  <div class="popup">
+    <button class="close-btn" onclick="closeOverlay('bulkOverlay')">✕ CLOSE</button>
+    <div class="popup-title">BULK CHECK</div>
+    <div class="popup-sub">Paste usernames below, one per line. Max 100.</div>
+    <textarea class="bulk-textarea" id="bulkInput" placeholder="One username per line..."></textarea>
+    <div class="bulk-meta" id="bulkMeta">0 usernames — max 100</div>
+    <button class="action-btn" id="bulkBtn" onclick="runBulk()">▶ CHECK ALL</button>
+    <div class="bulk-progress" id="bulkProgress"></div>
+    <div class="bulk-results" id="bulkResults"></div>
+  </div>
+</div>
+
+<!-- NAME GENERATOR -->
+<div class="overlay" id="nameGenOverlay">
+  <div class="popup">
+    <button class="close-btn" onclick="closeOverlay('nameGenOverlay')">✕ CLOSE</button>
+    <div class="popup-title">NAME GENERATOR</div>
+    <div class="popup-sub">Generate random Minecraft-style usernames.</div>
+    <button class="action-btn" id="genBtn" onclick="runNameGen()">▶ GENERATE</button>
+    <div class="gen-results" id="genResults"></div>
+  </div>
+</div>
+
+<!-- AD -->
 <div class="ad-overlay" id="adOverlay">
   <div class="ad-box">
     <div class="ad-slot">YOUR AD HERE</div>
@@ -283,20 +459,11 @@
   const icon   = document.getElementById('icon');
   const label  = document.getElementById('label');
   const rname  = document.getElementById('rname');
-
   let searchCount = 0;
-  const AD_EVERY  = 10;
+  const AD_EVERY = 10;
 
-  function onType() {
-    setErr('');
-    result.className = 'result';
-  }
-
-  function setErr(msg) {
-    errEl.textContent = msg;
-    errEl.classList.toggle('show', !!msg);
-  }
-
+  function onType() { setErr(''); result.className = 'result'; }
+  function setErr(msg) { errEl.textContent = msg; errEl.classList.toggle('show', !!msg); }
   function validate(u) {
     if (!u) return 'Enter a username.';
     if (u.length < 3 || u.length > 16) return 'Must be 3–16 characters.';
@@ -309,67 +476,159 @@
     const u = inp.value.trim();
     const err = validate(u);
     if (err) { setErr(err); return; }
-
     btn.disabled = true;
     btn.innerHTML = '<span class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></span>';
     result.className = 'result';
     setErr('');
-
     try {
       const res  = await fetch(`/api/check?username=${encodeURIComponent(u)}`);
       const data = await res.json();
-
       if (data.available === true) {
-        result.className  = 'result avail show';
-        icon.textContent  = '✅';
-        label.textContent = 'AVAILABLE';
-        rname.textContent = u;
+        result.className = 'result avail show';
+        icon.textContent = '✅'; label.textContent = 'AVAILABLE'; rname.textContent = u;
       } else if (data.available === false) {
-        result.className  = 'result taken show';
-        icon.textContent  = '❌';
-        label.textContent = 'TAKEN';
-        rname.textContent = u;
-      } else {
-        setErr(data.error || 'Something went wrong. Try again.');
-      }
-
+        result.className = 'result taken show';
+        icon.textContent = '❌'; label.textContent = 'TAKEN'; rname.textContent = u;
+      } else { setErr(data.error || 'Something went wrong.'); }
       searchCount++;
       if (searchCount % AD_EVERY === 0) showAd();
-
-    } catch {
-      setErr('Network error — try again.');
-    } finally {
-      btn.disabled = false;
-      btn.textContent = 'SCAN USERNAME';
-    }
+    } catch { setErr('Network error — try again.'); }
+    finally { btn.disabled = false; btn.textContent = 'SCAN USERNAME'; }
   }
+
+  function openTools() { document.getElementById('toolsOverlay').classList.add('show'); }
+  function openBulk() { closeOverlay('toolsOverlay'); document.getElementById('bulkOverlay').classList.add('show'); }
+  function openNameGen() { closeOverlay('toolsOverlay'); document.getElementById('nameGenOverlay').classList.add('show'); }
+  function closeOverlay(id) { document.getElementById(id).classList.remove('show'); }
+
+  document.querySelectorAll('.overlay').forEach(o => {
+    o.addEventListener('click', e => { if (e.target === o) o.classList.remove('show'); });
+  });
+
+  // BULK CHECK
+  const bulkInput = document.getElementById('bulkInput');
+  bulkInput.addEventListener('input', () => {
+    const names = parseBulk();
+    document.getElementById('bulkMeta').textContent = `${Math.min(names.length, 100)} username${names.length !== 1 ? 's' : ''} — max 100`;
+  });
+  function parseBulk() {
+    return bulkInput.value.split('\n').map(l => l.trim()).filter(l => l.length > 0).slice(0, 100);
+  }
+
+  let bulkRunning = false;
+  async function runBulk() {
+    if (bulkRunning) return;
+    const names = parseBulk();
+    if (!names.length) return;
+    bulkRunning = true;
+    document.getElementById('bulkBtn').disabled = true;
+    document.getElementById('bulkResults').innerHTML = '';
+    document.getElementById('bulkProgress').textContent = '';
+    const resultsEl = document.getElementById('bulkResults');
+    const progressEl = document.getElementById('bulkProgress');
+
+    names.forEach(name => {
+      const el = document.createElement('div');
+      el.className = 'bulk-result-item checking';
+      el.id = `bulk-${name}`;
+      el.innerHTML = `<span>⋯</span><span>${name}</span>`;
+      resultsEl.appendChild(el);
+    });
+
+    let done = 0;
+    for (const name of names) {
+      const el = document.getElementById(`bulk-${name}`);
+      const err = validate(name);
+      if (err) {
+        el.className = 'bulk-result-item taken';
+        el.innerHTML = `<span>⚠</span><span>${name} — invalid</span>`;
+      } else {
+        try {
+          const res  = await fetch(`/api/check?username=${encodeURIComponent(name)}`);
+          const data = await res.json();
+          if (data.available === true) {
+            el.className = 'bulk-result-item avail';
+            el.innerHTML = `<span>✅</span><span>${name}</span>`;
+          } else {
+            el.className = 'bulk-result-item taken';
+            el.innerHTML = `<span>❌</span><span>${name}</span>`;
+          }
+        } catch {
+          el.className = 'bulk-result-item taken';
+          el.innerHTML = `<span>⚠</span><span>${name} — error</span>`;
+        }
+      }
+      done++;
+      progressEl.textContent = `${done} / ${names.length} checked`;
+      await sleep(1200);
+    }
+    bulkRunning = false;
+    document.getElementById('bulkBtn').disabled = false;
+    progressEl.textContent = `Done — ${done} checked`;
+  }
+
+  // NAME GENERATOR
+  const adjectives = [
+    'Crazy','Silent','Dark','Rapid','Frozen','Blazing','Shadow','Neon','Toxic','Lucky',
+    'Stealth','Hyper','Savage','Venom','Turbo','Ghost','Cosmic','Mighty','Rogue','Swift',
+    'Feral','Storm','Iron','Void','Grim','Salty','Epic','Slick','Prime','Ultra',
+    'Tango','Bravo','Alpha','Delta','Omega','Cyber','Pixel','Laser','Surge','Nova'
+  ];
+  const nouns = [
+    'Hog','Fox','Wolf','Hawk','Bear','Shark','Tiger','Eagle','Viper','Cobra',
+    'Ninja','Blade','Storm','Raven','Drake','Flame','Frost','Skull','Claw','Fang',
+    'Rider','Sniper','Hunter','Raider','Ranger','Knight','Phantom','Specter','Reaper','Slayer',
+    'Goat','Pig','Squid','Creep','Block','Craft','Pixel','Node','Core','Byte'
+  ];
+
+  function generateName() {
+    const adj  = adjectives[Math.floor(Math.random() * adjectives.length)];
+    const noun = nouns[Math.floor(Math.random() * nouns.length)];
+    const num  = Math.random() > 0.4 ? Math.floor(Math.random() * 99) + 1 : '';
+    return `${adj}${noun}${num}`;
+  }
+
+  function runNameGen() {
+    const resultsEl = document.getElementById('genResults');
+    resultsEl.innerHTML = '';
+    const names = Array.from({ length: 6 }, generateName);
+    names.forEach((name, i) => {
+      const el = document.createElement('div');
+      el.className = 'gen-item';
+      el.style.animationDelay = `${i * 0.06}s`;
+      el.innerHTML = `
+        <div class="gen-name">${name}</div>
+        <button class="gen-copy" onclick="copyName('${name}', this)">COPY</button>
+      `;
+      resultsEl.appendChild(el);
+    });
+  }
+
+  function copyName(name, btn) {
+    navigator.clipboard.writeText(name).then(() => {
+      btn.textContent = 'COPIED!';
+      setTimeout(() => btn.textContent = 'COPY', 1500);
+    });
+  }
+
+  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
   function showAd() {
     const overlay  = document.getElementById('adOverlay');
     const closeBtn = document.getElementById('adClose');
     const timerEl  = document.getElementById('adTimer');
-    const WAIT     = 5;
-
+    const WAIT = 5;
     overlay.classList.add('show');
-    closeBtn.disabled   = true;
+    closeBtn.disabled = true;
     timerEl.textContent = `${WAIT}s`;
-
     let left = WAIT;
     const t = setInterval(() => {
       left--;
-      if (left <= 0) {
-        clearInterval(t);
-        closeBtn.disabled   = false;
-        timerEl.textContent = '';
-      } else {
-        timerEl.textContent = `${left}s`;
-      }
+      if (left <= 0) { clearInterval(t); closeBtn.disabled = false; timerEl.textContent = ''; }
+      else { timerEl.textContent = `${left}s`; }
     }, 1000);
   }
-
-  function closeAd() {
-    document.getElementById('adOverlay').classList.remove('show');
-  }
+  function closeAd() { document.getElementById('adOverlay').classList.remove('show'); }
 </script>
 </body>
 </html>
