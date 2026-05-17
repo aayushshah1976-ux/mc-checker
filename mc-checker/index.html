@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Check Minecraft Usernames</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/skinview3d@2.1.1/bundles/skinview3d.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -359,38 +358,40 @@
     display: none;
     flex-direction: column;
     align-items: center;
-    gap: 0;
+    gap: 8px;
+    padding: 20px 0;
     animation: up 0.4s ease both;
   }
   .preview-container.show { display: flex; }
 
-  /* Minecraft-style nameplate */
   .nameplate {
-    background: rgba(0,0,0,0.75);
-    padding: 5px 12px;
+    background: rgba(0,0,0,0.78);
+    padding: 6px 14px;
     border-radius: 3px;
     font-family: 'Press Start 2P', monospace;
     font-size: 14px;
     color: #fff;
     text-shadow: 2px 2px 0 #3f3f3f;
-    margin-bottom: 6px;
     letter-spacing: 1px;
     text-align: center;
+    margin-bottom: 10px;
   }
 
-  .skin-canvas-wrap {
-    border-radius: 12px;
-    overflow: hidden;
-    background: transparent;
+  /* Pixel Steve */
+  .steve {
+    image-rendering: pixelated;
+    display: grid;
+    gap: 0;
   }
-
-  .preview-status {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    color: var(--muted);
-    letter-spacing: 2px;
-    text-align: center;
-    padding: 16px 0;
+  .steve-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: steveBob 1s ease-in-out infinite;
+  }
+  @keyframes steveBob {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
   }
 
   /* AD */
@@ -535,12 +536,9 @@
       <input type="text" id="previewInp" placeholder="username..." maxlength="16" onkeydown="if(event.key==='Enter')loadPreview()">
       <button class="preview-go-btn" onclick="loadPreview()">▶ GO</button>
     </div>
-    <div class="preview-status" id="previewStatus"></div>
     <div class="preview-container" id="previewContainer">
       <div class="nameplate" id="nameplate"></div>
-      <div class="skin-canvas-wrap">
-        <canvas id="skinCanvas" width="300" height="400"></canvas>
-      </div>
+      <div class="steve-wrap" id="steveWrap"></div>
     </div>
   </div>
 </div>
@@ -709,44 +707,73 @@
   }
 
   // NAMEPLATE PREVIEW
-  let skinViewer = null;
-
-  async function loadPreview() {
+  function loadPreview() {
     const username = document.getElementById('previewInp').value.trim();
     if (!username) return;
-
-    const statusEl    = document.getElementById('previewStatus');
     const container   = document.getElementById('previewContainer');
     const nameplateEl = document.getElementById('nameplate');
-
-    container.classList.remove('show');
-    statusEl.textContent = 'Loading skin...';
+    const steveWrap   = document.getElementById('steveWrap');
 
     nameplateEl.textContent = username;
-
-    // Init or reuse viewer
-    if (!skinViewer) {
-      skinViewer = new skinview3d.SkinViewer({
-        canvas: document.getElementById('skinCanvas'),
-        width: 300,
-        height: 400,
-      });
-      skinViewer.controls.enableZoom = false;
-      skinViewer.animation = new skinview3d.WalkingAnimation();
-      skinViewer.animation.speed = 0.6;
-      skinViewer.camera.position.z = 70;
-    }
-
-    // Steve skin embedded as base64 to avoid CORS issues
-    const steveSkin = 'https://minecraft.wiki/images/Steve_skin.png';
-    
-    try {
-      await skinViewer.loadSkin(steveSkin, { model: 'default' });
-    } catch {
-      // if that fails, try without model option
-    }
-    statusEl.textContent = '';
+    steveWrap.innerHTML = buildSteve();
     container.classList.add('show');
+  }
+
+  function buildSteve() {
+    // Steve pixel art using a grid of colored divs (8px each)
+    // Each row is an array of color codes, '.' = transparent
+    const S = '#C7A076'; // skin
+    const H = '#512B07'; // hair/brown
+    const W = '#FFFFFF'; // white
+    const B = '#1B4FD6'; // blue shirt
+    const P = '#1A3BA8'; // blue pants
+    const K = '#1A1209'; // black shoe
+    const E = '#3559A7'; // eye
+    const _ = 'transparent';
+
+    // 16-wide pixel art of steve (front view), 32 rows tall
+    const rows = [
+      [_,_,_,_,H,H,H,H,H,H,H,H,_,_,_,_],
+      [_,_,_,H,H,H,H,H,H,H,H,H,H,_,_,_],
+      [_,_,_,H,H,H,H,H,H,H,H,H,H,_,_,_],
+      [_,_,_,H,H,S,S,S,S,S,S,H,H,_,_,_],
+      [_,_,_,H,S,S,S,S,S,S,S,S,H,_,_,_],
+      [_,_,_,H,S,E,E,S,S,E,E,S,H,_,_,_],
+      [_,_,_,H,S,E,E,S,S,E,E,S,H,_,_,_],
+      [_,_,_,H,S,S,S,S,S,S,S,S,H,_,_,_],
+      [_,_,_,H,S,H,S,S,S,S,H,S,H,_,_,_],
+      [_,_,_,H,S,S,S,S,S,S,S,S,H,_,_,_],
+      [_,_,_,_,H,H,H,H,H,H,H,H,_,_,_,_],
+      // body
+      [_,B,B,B,B,B,B,B,B,B,B,B,B,B,B,_],
+      [_,B,B,B,B,B,B,B,B,B,B,B,B,B,B,_],
+      [_,B,B,B,B,B,B,B,B,B,B,B,B,B,B,_],
+      [_,B,B,B,B,B,B,B,B,B,B,B,B,B,B,_],
+      [_,B,B,B,B,B,B,B,B,B,B,B,B,B,B,_],
+      [_,B,B,B,B,B,B,B,B,B,B,B,B,B,B,_],
+      [_,B,B,B,B,B,B,B,B,B,B,B,B,B,B,_],
+      // legs
+      [_,_,P,P,P,P,P,_,_,P,P,P,P,P,_,_],
+      [_,_,P,P,P,P,P,_,_,P,P,P,P,P,_,_],
+      [_,_,P,P,P,P,P,_,_,P,P,P,P,P,_,_],
+      [_,_,P,P,P,P,P,_,_,P,P,P,P,P,_,_],
+      [_,_,P,P,P,P,P,_,_,P,P,P,P,P,_,_],
+      [_,_,P,P,P,P,P,_,_,P,P,P,P,P,_,_],
+      [_,_,K,K,K,K,K,_,_,K,K,K,K,K,_,_],
+      [_,_,K,K,K,K,K,_,_,K,K,K,K,K,_,_],
+    ];
+
+    const px = 10; // pixel size
+    let svg = `<svg width="${16*px}" height="${rows.length*px}" xmlns="http://www.w3.org/2000/svg" style="display:block">`;
+    rows.forEach((row, y) => {
+      row.forEach((color, x) => {
+        if (color !== 'transparent') {
+          svg += `<rect x="${x*px}" y="${y*px}" width="${px}" height="${px}" fill="${color}"/>`;
+        }
+      });
+    });
+    svg += '</svg>';
+    return svg;
   }
 
   // HELPERS
