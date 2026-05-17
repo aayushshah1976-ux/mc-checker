@@ -530,7 +530,7 @@
   <div class="popup">
     <button class="close-btn" onclick="closeOverlay('previewOverlay')">✕ CLOSE</button>
     <div class="popup-title">NAMEPLATE PREVIEW</div>
-    <div class="popup-sub">Type any username to preview it on a 3D skin. Uses their actual skin or Steve if not found.</div>
+    <div class="popup-sub">Type any username to preview it on a 3D Steve skin.</div>
     <div class="preview-input-row">
       <input type="text" id="previewInp" placeholder="username..." maxlength="16" onkeydown="if(event.key==='Enter')loadPreview()">
       <button class="preview-go-btn" onclick="loadPreview()">▶ GO</button>
@@ -722,10 +722,6 @@
     container.classList.remove('show');
     statusEl.textContent = 'Loading skin...';
 
-    // Use crafatar as CORS-safe proxy for skins
-    const skinUrl  = `https://crafatar.com/skins/${encodeURIComponent(username)}`;
-    const steveUrl = 'https://crafatar.com/skins/steve';
-
     nameplateEl.textContent = username;
 
     // Init or reuse viewer
@@ -742,18 +738,11 @@
     }
 
     try {
-      await skinViewer.loadSkin(skinUrl);
+      await skinViewer.loadSkin('https://crafatar.com/skins/steve');
       statusEl.textContent = '';
       container.classList.add('show');
     } catch {
-      // fallback to Steve
-      try {
-        await skinViewer.loadSkin(steveUrl);
-        statusEl.textContent = 'Skin not found — showing Steve';
-        container.classList.add('show');
-      } catch {
-        statusEl.textContent = 'Could not load skin.';
-      }
+      statusEl.textContent = 'Could not load skin.';
     }
   }
 
