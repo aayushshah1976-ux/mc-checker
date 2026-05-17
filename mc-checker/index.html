@@ -524,123 +524,6 @@
   }
   .skin-dl-btn:hover { background: rgba(74,222,128,0.2); color: #fff; }
   .skin-err { font-family: 'Share Tech Mono', monospace; font-size: 14px; color: var(--red); letter-spacing: 1px; }
-
-  /* PLAYER REPORT CARD */
-  .report-input-row {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 20px;
-  }
-  .report-input-row input {
-    flex: 1;
-    background: rgba(0,0,0,0.4);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px 18px;
-    color: #fff;
-    font-family: 'Press Start 2P', monospace;
-    font-size: 13px;
-    letter-spacing: 2px;
-    outline: none;
-    transition: border-color 0.2s;
-    caret-color: var(--green);
-  }
-  .report-input-row input:focus { border-color: var(--border-bright); }
-  .report-input-row input::placeholder { color: var(--muted); font-size: 10px; }
-  .report-go-btn {
-    padding: 16px 20px;
-    background: rgba(74,222,128,0.1);
-    border: 1px solid var(--border-bright);
-    border-radius: 10px;
-    color: var(--green);
-    font-family: 'Press Start 2P', monospace;
-    font-size: 10px;
-    letter-spacing: 1px;
-    cursor: pointer;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-  .report-go-btn:hover:not(:disabled) { background: rgba(74,222,128,0.2); color: #fff; }
-  .report-go-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  .report-result { display: none; flex-direction: column; gap: 20px; animation: up 0.4s ease both; }
-  .report-result.show { display: flex; }
-  .report-err { font-family: 'Share Tech Mono', monospace; font-size: 14px; color: var(--red); letter-spacing: 1px; }
-
-  .report-top {
-    display: flex;
-    gap: 24px;
-    align-items: flex-start;
-  }
-  .report-skin-wrap {
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
-  .report-skin-img {
-    width: 120px;
-    height: 120px;
-    image-rendering: pixelated;
-    animation: skinSpin 6s linear infinite;
-    display: block;
-  }
-  @keyframes skinSpin {
-    0%   { content: url('https://visage.surgeplay.com/full/120/__USERNAME__?y=-15'); }
-  }
-  .report-skin-label {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 1px;
-  }
-  .report-info { flex: 1; display: flex; flex-direction: column; gap: 12px; }
-  .report-field {
-    background: rgba(74,222,128,0.03);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 12px 16px;
-  }
-  .report-field-label {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 8px;
-    color: var(--muted);
-    letter-spacing: 2px;
-    margin-bottom: 6px;
-  }
-  .report-field-value {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    color: #fff;
-    letter-spacing: 1px;
-    word-break: break-all;
-  }
-  .report-field-value.green { color: var(--green); }
-
-  .report-history-title {
-    font-family: 'Press Start 2P', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 2px;
-    margin-bottom: 10px;
-  }
-  .report-history-list { display: flex; flex-direction: column; gap: 8px; }
-  .report-history-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 16px;
-    background: rgba(74,222,128,0.03);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    color: #fff;
-    letter-spacing: 1px;
-  }
-  .report-history-item.current { border-color: rgba(74,222,128,0.3); color: var(--green); }
-  .report-history-date { font-size: 11px; color: var(--muted); }
 </style>
 </head>
 <body>
@@ -693,13 +576,6 @@
         <div>
           <div class="tool-name">SKIN STEALER</div>
           <div class="tool-desc">Download any player's current skin texture</div>
-        </div>
-        <div class="tool-arrow">›</div>
-      </div>
-      <div class="tool-item" onclick="openReportCard()">
-        <div>
-          <div class="tool-name">PLAYER REPORT CARD</div>
-          <div class="tool-desc">3D skin, UUID, account age &amp; name history</div>
         </div>
         <div class="tool-arrow">›</div>
       </div>
@@ -776,33 +652,6 @@
   </div>
 </div>
 
-<!-- PLAYER REPORT CARD -->
-<div class="overlay" id="reportOverlay">
-  <div class="popup">
-    <button class="close-btn" onclick="closeOverlay('reportOverlay')">✕ CLOSE</button>
-    <div class="popup-title">PLAYER REPORT CARD</div>
-    <div class="popup-sub">Enter a username to pull their full profile.</div>
-    <div class="report-input-row">
-      <input type="text" id="reportInp" placeholder="username..." maxlength="16" autocomplete="off" spellcheck="false" onkeydown="if(event.key==='Enter')fetchReport()">
-      <button class="report-go-btn" id="reportBtn" onclick="fetchReport()">▶ LOOKUP</button>
-    </div>
-    <div class="report-result" id="reportResult">
-      <div class="report-err" id="reportErr" style="display:none"></div>
-      <div class="report-top" id="reportTop">
-        <div class="report-skin-wrap">
-          <img class="report-skin-img" id="reportSkinImg" src="" alt="skin">
-          <div class="report-skin-label">LIVE SKIN</div>
-        </div>
-        <div class="report-info" id="reportInfo"></div>
-      </div>
-      <div id="reportHistoryWrap">
-        <div class="report-history-title">NAME HISTORY</div>
-        <div class="report-history-list" id="reportHistoryList"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- AD -->
 <div class="ad-overlay" id="adOverlay">
   <div class="ad-box">
@@ -864,7 +713,6 @@
   function openNameGen() { closeOverlay('toolsOverlay'); document.getElementById('nameGenOverlay').classList.add('show'); }
   function openPreview() { closeOverlay('toolsOverlay'); document.getElementById('previewOverlay').classList.add('show'); }
   function openSkinStealer() { closeOverlay('toolsOverlay'); document.getElementById('skinOverlay').classList.add('show'); }
-  function openReportCard()  { closeOverlay('toolsOverlay'); document.getElementById('reportOverlay').classList.add('show'); }
   function closeOverlay(id) { document.getElementById(id).classList.remove('show'); }
 
   document.querySelectorAll('.overlay').forEach(o => {
@@ -1112,95 +960,6 @@
     } finally {
       btn.disabled = false;
       btn.textContent = '▶ FETCH';
-    }
-  }
-
-  // PLAYER REPORT CARD
-  async function fetchReport() {
-    const username = document.getElementById('reportInp').value.trim();
-    if (!username) return;
-    const btn         = document.getElementById('reportBtn');
-    const resultEl    = document.getElementById('reportResult');
-    const errEl       = document.getElementById('reportErr');
-    const topEl       = document.getElementById('reportTop');
-    const infoEl      = document.getElementById('reportInfo');
-    const historyWrap = document.getElementById('reportHistoryWrap');
-    const historyList = document.getElementById('reportHistoryList');
-    const skinImg     = document.getElementById('reportSkinImg');
-
-    btn.disabled = true;
-    btn.textContent = '...';
-    errEl.style.display = 'none';
-    topEl.style.display = 'none';
-    historyWrap.style.display = 'none';
-    resultEl.className = 'report-result show';
-
-    try {
-      // All data fetched server-side via /api/report to avoid CORS issues
-      const res  = await fetch(`/api/report?username=${encodeURIComponent(username)}`);
-      const data = await res.json();
-
-      if (data.error) {
-        errEl.textContent = data.error;
-        errEl.style.display = 'block';
-        return;
-      }
-
-      const { uuid, name, firstSeen, nameHistory } = data;
-
-      // Format UUID with dashes: 8-4-4-4-12
-      const uuidFormatted = uuid.replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, '$1-$2-$3-$4-$5');
-
-      // 3D rotating skin via visage.surgeplay.com — served as an animated image, no CORS issues
-      skinImg.src = `https://visage.surgeplay.com/full/160/${uuid}`;
-
-      // Format first seen date if present
-      const firstSeenDisplay = firstSeen
-        ? new Date(firstSeen).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
-        : 'Unknown';
-
-      // Render info fields
-      infoEl.innerHTML = `
-        <div class="report-field">
-          <div class="report-field-label">USERNAME</div>
-          <div class="report-field-value green">${name}</div>
-        </div>
-        <div class="report-field">
-          <div class="report-field-label">UUID</div>
-          <div class="report-field-value">${uuidFormatted}</div>
-        </div>
-        <div class="report-field">
-          <div class="report-field-label">FIRST SEEN</div>
-          <div class="report-field-value">${firstSeenDisplay}</div>
-        </div>
-      `;
-
-      // Render name history
-      if (nameHistory.length > 0) {
-        historyList.innerHTML = '';
-        [...nameHistory].reverse().forEach((entry, i) => {
-          const el   = document.createElement('div');
-          const date = entry.changed_at
-            ? new Date(entry.changed_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
-            : 'Original';
-          el.className = `report-history-item${i === 0 ? ' current' : ''}`;
-          el.innerHTML = `<span>${entry.username}</span><span class="report-history-date">${date}</span>`;
-          historyList.appendChild(el);
-        });
-        historyWrap.style.display = 'block';
-      } else {
-        historyList.innerHTML = `<div class="report-history-item current"><span>${name}</span><span class="report-history-date">Current</span></div>`;
-        historyWrap.style.display = 'block';
-      }
-
-      topEl.style.display = 'flex';
-
-    } catch {
-      errEl.textContent = 'Network error — try again.';
-      errEl.style.display = 'block';
-    } finally {
-      btn.disabled = false;
-      btn.textContent = '▶ LOOKUP';
     }
   }
 
