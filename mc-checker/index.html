@@ -449,6 +449,81 @@
   .ad-close:hover:not(:disabled) { background: rgba(74,222,128,0.18); }
   .ad-close:disabled { opacity: 0.35; cursor: not-allowed; }
   .ad-timer { font-family: 'Press Start 2P', monospace; font-size: 20px; color: var(--green); margin-top: 14px; letter-spacing: 2px; min-height: 40px; }
+
+  /* SKIN STEALER */
+  .skin-input-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .skin-input-row input {
+    flex: 1;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    color: #fff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 13px;
+    letter-spacing: 2px;
+    outline: none;
+    transition: border-color 0.2s;
+    caret-color: var(--green);
+  }
+  .skin-input-row input:focus { border-color: var(--border-bright); }
+  .skin-input-row input::placeholder { color: var(--muted); font-size: 10px; }
+  .skin-go-btn {
+    padding: 16px 20px;
+    background: rgba(74,222,128,0.1);
+    border: 1px solid var(--border-bright);
+    border-radius: 10px;
+    color: var(--green);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .skin-go-btn:hover:not(:disabled) { background: rgba(74,222,128,0.2); color: #fff; }
+  .skin-go-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .skin-result {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 0;
+    animation: up 0.4s ease both;
+  }
+  .skin-result.show { display: flex; }
+  .skin-preview-wrap {
+    display: flex;
+    gap: 28px;
+    align-items: flex-start;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .skin-panel { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .skin-panel-label { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: var(--muted); letter-spacing: 1px; }
+  .skin-raw { image-rendering: pixelated; border: 1px solid var(--border); border-radius: 6px; width: 128px; height: 128px; }
+  .skin-face { image-rendering: pixelated; border: 1px solid var(--border); border-radius: 6px; width: 80px; height: 80px; }
+  .skin-dl-btn {
+    padding: 14px 24px;
+    background: rgba(74,222,128,0.1);
+    border: 1px solid var(--border-bright);
+    border-radius: 10px;
+    color: var(--green);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+  }
+  .skin-dl-btn:hover { background: rgba(74,222,128,0.2); color: #fff; }
+  .skin-err { font-family: 'Share Tech Mono', monospace; font-size: 14px; color: var(--red); letter-spacing: 1px; }
 </style>
 </head>
 <body>
@@ -497,6 +572,13 @@
         </div>
         <div class="tool-arrow">›</div>
       </div>
+      <div class="tool-item" onclick="openSkinStealer()">
+        <div>
+          <div class="tool-name">SKIN STEALER</div>
+          <div class="tool-desc">Download any player's current skin texture</div>
+        </div>
+        <div class="tool-arrow">›</div>
+      </div>
     </div>
   </div>
 </div>
@@ -539,6 +621,33 @@
     <div class="preview-container" id="previewContainer">
       <div class="nameplate" id="nameplate"></div>
       <div class="steve-wrap" id="steveWrap"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SKIN STEALER -->
+<div class="overlay" id="skinOverlay">
+  <div class="popup">
+    <button class="close-btn" onclick="closeOverlay('skinOverlay')">✕ CLOSE</button>
+    <div class="popup-title">SKIN STEALER</div>
+    <div class="popup-sub">Enter any player's username to view and download their skin.</div>
+    <div class="skin-input-row">
+      <input type="text" id="skinInp" placeholder="username..." maxlength="16" autocomplete="off" spellcheck="false" onkeydown="if(event.key==='Enter')fetchSkin()">
+      <button class="skin-go-btn" id="skinBtn" onclick="fetchSkin()">▶ FETCH</button>
+    </div>
+    <div class="skin-result" id="skinResult">
+      <div class="skin-err" id="skinErr" style="display:none"></div>
+      <div class="skin-preview-wrap" id="skinPreviews">
+        <div class="skin-panel">
+          <div class="skin-panel-label">FULL SKIN (64×64)</div>
+          <canvas class="skin-raw" id="skinRawCanvas" width="64" height="64"></canvas>
+        </div>
+        <div class="skin-panel">
+          <div class="skin-panel-label">FACE</div>
+          <canvas class="skin-face" id="skinFaceCanvas" width="8" height="8"></canvas>
+        </div>
+      </div>
+      <a class="skin-dl-btn" id="skinDlBtn" download="">⬇ DOWNLOAD SKIN</a>
     </div>
   </div>
 </div>
@@ -603,6 +712,7 @@
   function openBulk()    { closeOverlay('toolsOverlay'); document.getElementById('bulkOverlay').classList.add('show'); }
   function openNameGen() { closeOverlay('toolsOverlay'); document.getElementById('nameGenOverlay').classList.add('show'); }
   function openPreview() { closeOverlay('toolsOverlay'); document.getElementById('previewOverlay').classList.add('show'); }
+  function openSkinStealer() { closeOverlay('toolsOverlay'); document.getElementById('skinOverlay').classList.add('show'); }
   function closeOverlay(id) { document.getElementById(id).classList.remove('show'); }
 
   document.querySelectorAll('.overlay').forEach(o => {
@@ -722,45 +832,59 @@
   function buildSteve() {
     // Steve pixel art using a grid of colored divs (8px each)
     // Each row is an array of color codes, '.' = transparent
-    const S = '#C7A076'; // skin
-    const H = '#512B07'; // hair/brown
-    const W = '#FFFFFF'; // white
-    const B = '#1B4FD6'; // blue shirt
-    const P = '#1A3BA8'; // blue pants
-    const K = '#1A1209'; // black shoe
-    const E = '#3559A7'; // eye
+    // Canonical Minecraft Steve colors (matched to official texture)
+    const S = '#A97D64'; // skin (brown)
+    const SD= '#8B6349'; // skin shadow (under nose, beard area)
+    const H = '#3D2200'; // hair (dark brown)
+    const HL= '#6B3D2E'; // hair highlight
+    const C = '#6EBDD6'; // cyan shirt
+    const CD= '#4A9DB5'; // shirt shadow/cuff
+    const P = '#494697'; // dark blue-purple pants
+    const PD= '#333080'; // pants shadow
+    const G = '#6B6B6B'; // grey boots
+    const GD= '#4A4A4A'; // boot shadow
+    const EW= '#F0F0F0'; // eye white
+    const EP= '#3A3A8A'; // eye pupil (blue-purple)
+    const N = '#8B6349'; // nose (same as skin shadow)
     const _ = 'transparent';
 
-    // 16-wide pixel art of steve (front view), 32 rows tall
+    // 16-wide accurate Steve front view
     const rows = [
+      // Hair top
       [_,_,_,_,H,H,H,H,H,H,H,H,_,_,_,_],
       [_,_,_,H,H,H,H,H,H,H,H,H,H,_,_,_],
-      [_,_,_,H,H,H,H,H,H,H,H,H,H,_,_,_],
+      [_,_,_,H,HL,H,H,H,H,H,H,HL,H,_,_,_],
+      // Face row 1 - hair fringe
       [_,_,_,H,H,S,S,S,S,S,S,H,H,_,_,_],
+      // Face - forehead
       [_,_,_,H,S,S,S,S,S,S,S,S,H,_,_,_],
-      [_,_,_,H,S,E,E,S,S,E,E,S,H,_,_,_],
-      [_,_,_,H,S,E,E,S,S,E,E,S,H,_,_,_],
-      [_,_,_,H,S,S,S,S,S,S,S,S,H,_,_,_],
-      [_,_,_,H,S,H,S,S,S,S,H,S,H,_,_,_],
-      [_,_,_,H,S,S,S,S,S,S,S,S,H,_,_,_],
+      // Eyes
+      [_,_,_,H,S,EW,EP,S,S,EW,EP,S,H,_,_,_],
+      [_,_,_,H,S,EW,EP,S,S,EW,EP,S,H,_,_,_],
+      // Nose
+      [_,_,_,H,S,S,S,N,S,S,S,S,H,_,_,_],
+      // Mouth/beard
+      [_,_,_,H,S,SD,S,S,S,S,SD,S,H,_,_,_],
+      [_,_,_,H,S,SD,SD,SD,SD,SD,SD,S,H,_,_,_],
       [_,_,_,_,H,H,H,H,H,H,H,H,_,_,_,_],
-      // body
-      [_,B,B,B,B,B,B,B,B,B,B,B,B,B,B,_],
-      [_,B,B,B,B,B,B,B,B,B,B,B,B,B,B,_],
-      [_,B,B,B,B,B,B,B,B,B,B,B,B,B,B,_],
-      [_,B,B,B,B,B,B,B,B,B,B,B,B,B,B,_],
-      [_,B,B,B,B,B,B,B,B,B,B,B,B,B,B,_],
-      [_,B,B,B,B,B,B,B,B,B,B,B,B,B,B,_],
-      [_,B,B,B,B,B,B,B,B,B,B,B,B,B,B,_],
-      // legs
+      // Body - cyan shirt with cuffs
+      [_,C,C,C,C,C,C,C,C,C,C,C,C,C,C,_],
+      [_,C,C,C,C,C,C,C,C,C,C,C,C,C,C,_],
+      [_,C,C,C,C,C,C,C,C,C,C,C,C,C,C,_],
+      [_,C,C,C,C,C,C,C,C,C,C,C,C,C,C,_],
+      [_,CD,C,C,C,C,C,C,C,C,C,C,C,C,CD,_],
+      [_,CD,C,C,C,C,C,C,C,C,C,C,C,C,CD,_],
+      [_,CD,CD,CD,CD,CD,CD,CD,CD,CD,CD,CD,CD,CD,CD,_],
+      // Legs - dark blue/purple pants
       [_,_,P,P,P,P,P,_,_,P,P,P,P,P,_,_],
       [_,_,P,P,P,P,P,_,_,P,P,P,P,P,_,_],
       [_,_,P,P,P,P,P,_,_,P,P,P,P,P,_,_],
       [_,_,P,P,P,P,P,_,_,P,P,P,P,P,_,_],
-      [_,_,P,P,P,P,P,_,_,P,P,P,P,P,_,_],
-      [_,_,P,P,P,P,P,_,_,P,P,P,P,P,_,_],
-      [_,_,K,K,K,K,K,_,_,K,K,K,K,K,_,_],
-      [_,_,K,K,K,K,K,_,_,K,K,K,K,K,_,_],
+      [_,_,PD,P,P,P,PD,_,_,PD,P,P,P,PD,_,_],
+      [_,_,PD,P,P,P,PD,_,_,PD,P,P,P,PD,_,_],
+      // Boots - grey
+      [_,_,G,G,G,G,G,_,_,G,G,G,G,G,_,_],
+      [_,_,GD,GD,GD,GD,GD,_,_,GD,GD,GD,GD,GD,_,_],
     ];
 
     const px = 10; // pixel size
@@ -774,6 +898,69 @@
     });
     svg += '</svg>';
     return svg;
+  }
+
+  // SKIN STEALER
+  async function fetchSkin() {
+    const username = document.getElementById('skinInp').value.trim();
+    if (!username) return;
+    const btn       = document.getElementById('skinBtn');
+    const resultEl  = document.getElementById('skinResult');
+    const errEl     = document.getElementById('skinErr');
+    const previews  = document.getElementById('skinPreviews');
+    const dlBtn     = document.getElementById('skinDlBtn');
+
+    btn.disabled = true;
+    btn.textContent = '...';
+    errEl.style.display = 'none';
+    previews.style.display = 'none';
+    dlBtn.style.display = 'none';
+    resultEl.className = 'skin-result show';
+
+    try {
+      const res = await fetch(`/api/skin?username=${encodeURIComponent(username)}`);
+
+      if (!res.ok || res.headers.get('content-type')?.includes('application/json')) {
+        const data = await res.json();
+        errEl.textContent = data.error || 'Something went wrong.';
+        errEl.style.display = 'block';
+      } else {
+        // Got the image blob back from our proxy
+        const blob = await res.blob();
+        const url  = URL.createObjectURL(blob);
+
+        // Draw full skin onto canvas
+        const img = new Image();
+        img.onload = () => {
+          // Full skin canvas (64x64 -> displayed at 128x128 via CSS)
+          const rawCanvas  = document.getElementById('skinRawCanvas');
+          const rawCtx     = rawCanvas.getContext('2d');
+          rawCtx.imageSmoothingEnabled = false;
+          rawCtx.drawImage(img, 0, 0, 64, 64);
+
+          // Face canvas: face layer is at x=8,y=8, 8x8 pixels on the skin texture
+          const faceCanvas = document.getElementById('skinFaceCanvas');
+          const faceCtx    = faceCanvas.getContext('2d');
+          faceCtx.imageSmoothingEnabled = false;
+          faceCtx.drawImage(img, 8, 8, 8, 8, 0, 0, 8, 8);
+
+          // Download link
+          dlBtn.href = url;
+          dlBtn.download = `${username}.png`;
+          dlBtn.textContent = `⬇ DOWNLOAD ${username.toUpperCase()}.PNG`;
+
+          previews.style.display = 'flex';
+          dlBtn.style.display = 'inline-block';
+        };
+        img.src = url;
+      }
+    } catch {
+      errEl.textContent = 'Network error — try again.';
+      errEl.style.display = 'block';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = '▶ FETCH';
+    }
   }
 
   // HELPERS
