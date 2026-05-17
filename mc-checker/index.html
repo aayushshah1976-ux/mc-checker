@@ -1136,56 +1136,34 @@
     resultEl.className = 'report-result show';
 
     try {
-      // Step 1: get UUID + basic profile from our existing check endpoint logic
-      // We call Mojang directly from frontend for the profile (public API, CORS allowed)
-      const profileRes = await fetch(
-        `https://api.minecraftservices.com/minecraft/profile/lookup/name/${encodeURIComponent(username)}`
-      );
+      // All data fetched server-side via /api/report to avoid CORS issues
+      const res  = await fetch(`/api/report?username=${encodeURIComponent(username)}`);
+      const data = await res.json();
 
-      if (profileRes.status === 404) {
-        errEl.textContent = 'Player not found.';
-        errEl.style.display = 'block';
-        return;
-      }
-      if (!profileRes.ok) {
-        errEl.textContent = `Mojang API error: ${profileRes.status}`;
+      if (data.error) {
+        errEl.textContent = data.error;
         errEl.style.display = 'block';
         return;
       }
 
-      const profile = await profileRes.json();
-      const uuid    = profile.id;
+      const { uuid, name, firstSeen, nameHistory } = data;
+
       // Format UUID with dashes: 8-4-4-4-12
       const uuidFormatted = uuid.replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, '$1-$2-$3-$4-$5');
 
-      // Step 2: 3D rotating skin via visage.surgeplay.com (public, no CORS issues)
-      // Visage rotates automatically when using the /full/ bust endpoint
+      // 3D rotating skin via visage.surgeplay.com — served as an animated image, no CORS issues
       skinImg.src = `https://visage.surgeplay.com/full/160/${uuid}`;
-      skinImg.style.animation = 'none'; // visage GIF already animates
 
-      // Step 3: name history + first seen via laby.net public API
-      let nameHistory = [];
-      let firstSeen   = null;
-      try {
-        const labyRes = await fetch(`https://laby.net/api/v3/user/${uuid}/profile`);
-        if (labyRes.ok) {
-          const labyData = await labyRes.json();
-          if (labyData.username_history?.length) {
-            nameHistory = labyData.username_history;
-          }
-          if (labyData.first_join) {
-            firstSeen = new Date(labyData.first_join).toLocaleDateString('en-GB', {
-              day: 'numeric', month: 'short', year: 'numeric'
-            });
-          }
-        }
-      } catch { /* laby.net optional — silently skip */ }
+      // Format first seen date if present
+      const firstSeenDisplay = firstSeen
+        ? new Date(firstSeen).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+        : 'Unknown';
 
       // Render info fields
       infoEl.innerHTML = `
         <div class="report-field">
           <div class="report-field-label">USERNAME</div>
-          <div class="report-field-value green">${profile.name}</div>
+          <div class="report-field-value green">${name}</div>
         </div>
         <div class="report-field">
           <div class="report-field-label">UUID</div>
@@ -1193,14 +1171,13 @@
         </div>
         <div class="report-field">
           <div class="report-field-label">FIRST SEEN</div>
-          <div class="report-field-value">${firstSeen || 'Unknown'}</div>
+          <div class="report-field-value">${firstSeenDisplay}</div>
         </div>
       `;
 
       // Render name history
       if (nameHistory.length > 0) {
         historyList.innerHTML = '';
-        // Show newest first
         [...nameHistory].reverse().forEach((entry, i) => {
           const el   = document.createElement('div');
           const date = entry.changed_at
@@ -1212,8 +1189,7 @@
         });
         historyWrap.style.display = 'block';
       } else {
-        // No history available — show just current name
-        historyList.innerHTML = `<div class="report-history-item current"><span>${profile.name}</span><span class="report-history-date">Current</span></div>`;
+        historyList.innerHTML = `<div class="report-history-item current"><span>${name}</span><span class="report-history-date">Current</span></div>`;
         historyWrap.style.display = 'block';
       }
 
