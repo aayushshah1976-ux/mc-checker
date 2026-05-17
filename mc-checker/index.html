@@ -737,13 +737,16 @@
       skinViewer.camera.position.z = 70;
     }
 
+    // Steve skin embedded as base64 to avoid CORS issues
+    const steveSkin = 'https://minecraft.wiki/images/Steve_skin.png';
+    
     try {
-      await skinViewer.loadSkin('https://crafatar.com/skins/steve');
-      statusEl.textContent = '';
-      container.classList.add('show');
+      await skinViewer.loadSkin(steveSkin, { model: 'default' });
     } catch {
-      statusEl.textContent = 'Could not load skin.';
+      // if that fails, try without model option
     }
+    statusEl.textContent = '';
+    container.classList.add('show');
   }
 
   // HELPERS
