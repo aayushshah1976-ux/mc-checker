@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Check Minecraft Usernames</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/skinview3d@2.1.1/bundles/skinview3d.min.js"></script>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -176,7 +177,7 @@
     padding: 36px 32px;
     width: 100%;
     max-width: 560px;
-    max-height: 85vh;
+    max-height: 90vh;
     overflow-y: auto;
     box-shadow: 0 0 80px rgba(0,0,0,0.9);
     animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
@@ -317,6 +318,81 @@
   }
   .gen-copy:hover { color: var(--green); border-color: var(--border-bright); }
 
+  /* NAMEPLATE PREVIEW */
+  .preview-input-row {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .preview-input-row input {
+    flex: 1;
+    background: rgba(0,0,0,0.4);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    color: #fff;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 13px;
+    letter-spacing: 2px;
+    outline: none;
+    transition: border-color 0.2s;
+    caret-color: var(--green);
+  }
+  .preview-input-row input:focus { border-color: var(--border-bright); }
+  .preview-input-row input::placeholder { color: var(--muted); font-size: 10px; }
+  .preview-go-btn {
+    padding: 16px 20px;
+    background: rgba(74,222,128,0.1);
+    border: 1px solid var(--border-bright);
+    border-radius: 10px;
+    color: var(--green);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .preview-go-btn:hover { background: rgba(74,222,128,0.2); color: #fff; }
+
+  .preview-container {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    animation: up 0.4s ease both;
+  }
+  .preview-container.show { display: flex; }
+
+  /* Minecraft-style nameplate */
+  .nameplate {
+    background: rgba(0,0,0,0.75);
+    padding: 5px 12px;
+    border-radius: 3px;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 14px;
+    color: #fff;
+    text-shadow: 2px 2px 0 #3f3f3f;
+    margin-bottom: 6px;
+    letter-spacing: 1px;
+    text-align: center;
+  }
+
+  .skin-canvas-wrap {
+    border-radius: 12px;
+    overflow: hidden;
+    background: transparent;
+  }
+
+  .preview-status {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-align: center;
+    padding: 16px 0;
+  }
+
   /* AD */
   .ad-overlay {
     display: none;
@@ -413,6 +489,13 @@
         </div>
         <div class="tool-arrow">›</div>
       </div>
+      <div class="tool-item" onclick="openPreview()">
+        <div>
+          <div class="tool-name">NAMEPLATE PREVIEW</div>
+          <div class="tool-desc">See your username above a 3D Minecraft skin</div>
+        </div>
+        <div class="tool-arrow">›</div>
+      </div>
     </div>
   </div>
 </div>
@@ -442,6 +525,26 @@
   </div>
 </div>
 
+<!-- NAMEPLATE PREVIEW -->
+<div class="overlay" id="previewOverlay">
+  <div class="popup">
+    <button class="close-btn" onclick="closeOverlay('previewOverlay')">✕ CLOSE</button>
+    <div class="popup-title">NAMEPLATE PREVIEW</div>
+    <div class="popup-sub">Type any username to preview it on a 3D skin. Uses their actual skin or Steve if not found.</div>
+    <div class="preview-input-row">
+      <input type="text" id="previewInp" placeholder="username..." maxlength="16" onkeydown="if(event.key==='Enter')loadPreview()">
+      <button class="preview-go-btn" onclick="loadPreview()">▶ GO</button>
+    </div>
+    <div class="preview-status" id="previewStatus"></div>
+    <div class="preview-container" id="previewContainer">
+      <div class="nameplate" id="nameplate"></div>
+      <div class="skin-canvas-wrap">
+        <canvas id="skinCanvas" width="300" height="400"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- AD -->
 <div class="ad-overlay" id="adOverlay">
   <div class="ad-box">
@@ -452,6 +555,7 @@
 </div>
 
 <script>
+  // MAIN CHECKER
   const inp    = document.getElementById('inp');
   const btn    = document.getElementById('btn');
   const errEl  = document.getElementById('err');
@@ -496,9 +600,11 @@
     finally { btn.disabled = false; btn.textContent = 'SCAN USERNAME'; }
   }
 
-  function openTools() { document.getElementById('toolsOverlay').classList.add('show'); }
-  function openBulk() { closeOverlay('toolsOverlay'); document.getElementById('bulkOverlay').classList.add('show'); }
+  // OVERLAYS
+  function openTools()   { document.getElementById('toolsOverlay').classList.add('show'); }
+  function openBulk()    { closeOverlay('toolsOverlay'); document.getElementById('bulkOverlay').classList.add('show'); }
   function openNameGen() { closeOverlay('toolsOverlay'); document.getElementById('nameGenOverlay').classList.add('show'); }
+  function openPreview() { closeOverlay('toolsOverlay'); document.getElementById('previewOverlay').classList.add('show'); }
   function closeOverlay(id) { document.getElementById(id).classList.remove('show'); }
 
   document.querySelectorAll('.overlay').forEach(o => {
@@ -526,7 +632,6 @@
     document.getElementById('bulkProgress').textContent = '';
     const resultsEl = document.getElementById('bulkResults');
     const progressEl = document.getElementById('bulkProgress');
-
     names.forEach(name => {
       const el = document.createElement('div');
       el.className = 'bulk-result-item checking';
@@ -534,7 +639,6 @@
       el.innerHTML = `<span>⋯</span><span>${name}</span>`;
       resultsEl.appendChild(el);
     });
-
     let done = 0;
     for (const name of names) {
       const el = document.getElementById(`bulk-${name}`);
@@ -580,30 +684,23 @@
     'Rider','Sniper','Hunter','Raider','Ranger','Knight','Phantom','Specter','Reaper','Slayer',
     'Goat','Pig','Squid','Creep','Block','Craft','Pixel','Node','Core','Byte'
   ];
-
   function generateName() {
     const adj  = adjectives[Math.floor(Math.random() * adjectives.length)];
     const noun = nouns[Math.floor(Math.random() * nouns.length)];
     const num  = Math.random() > 0.4 ? Math.floor(Math.random() * 99) + 1 : '';
     return `${adj}${noun}${num}`;
   }
-
   function runNameGen() {
     const resultsEl = document.getElementById('genResults');
     resultsEl.innerHTML = '';
-    const names = Array.from({ length: 6 }, generateName);
-    names.forEach((name, i) => {
+    Array.from({ length: 6 }, generateName).forEach((name, i) => {
       const el = document.createElement('div');
       el.className = 'gen-item';
       el.style.animationDelay = `${i * 0.06}s`;
-      el.innerHTML = `
-        <div class="gen-name">${name}</div>
-        <button class="gen-copy" onclick="copyName('${name}', this)">COPY</button>
-      `;
+      el.innerHTML = `<div class="gen-name">${name}</div><button class="gen-copy" onclick="copyName('${name}', this)">COPY</button>`;
       resultsEl.appendChild(el);
     });
   }
-
   function copyName(name, btn) {
     navigator.clipboard.writeText(name).then(() => {
       btn.textContent = 'COPIED!';
@@ -611,8 +708,59 @@
     });
   }
 
+  // NAMEPLATE PREVIEW
+  let skinViewer = null;
+
+  async function loadPreview() {
+    const username = document.getElementById('previewInp').value.trim();
+    if (!username) return;
+
+    const statusEl    = document.getElementById('previewStatus');
+    const container   = document.getElementById('previewContainer');
+    const nameplateEl = document.getElementById('nameplate');
+
+    container.classList.remove('show');
+    statusEl.textContent = 'Loading skin...';
+
+    // Use crafatar as CORS-safe proxy for skins
+    const skinUrl  = `https://crafatar.com/skins/${encodeURIComponent(username)}`;
+    const steveUrl = 'https://crafatar.com/skins/steve';
+
+    nameplateEl.textContent = username;
+
+    // Init or reuse viewer
+    if (!skinViewer) {
+      skinViewer = new skinview3d.SkinViewer({
+        canvas: document.getElementById('skinCanvas'),
+        width: 300,
+        height: 400,
+      });
+      skinViewer.controls.enableZoom = false;
+      skinViewer.animation = new skinview3d.WalkingAnimation();
+      skinViewer.animation.speed = 0.6;
+      skinViewer.camera.position.z = 70;
+    }
+
+    try {
+      await skinViewer.loadSkin(skinUrl);
+      statusEl.textContent = '';
+      container.classList.add('show');
+    } catch {
+      // fallback to Steve
+      try {
+        await skinViewer.loadSkin(steveUrl);
+        statusEl.textContent = 'Skin not found — showing Steve';
+        container.classList.add('show');
+      } catch {
+        statusEl.textContent = 'Could not load skin.';
+      }
+    }
+  }
+
+  // HELPERS
   function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
+  // AD
   function showAd() {
     const overlay  = document.getElementById('adOverlay');
     const closeBtn = document.getElementById('adClose');
