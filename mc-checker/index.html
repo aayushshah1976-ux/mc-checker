@@ -377,16 +377,11 @@
     margin-bottom: 10px;
   }
 
-  /* Pixel Steve */
-  .steve {
-    image-rendering: pixelated;
-    display: grid;
-    gap: 0;
-  }
-  .steve-wrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  /* Steve 3D */
+  .steve-3d {
+    width: 200px;
+    height: 200px;
+    display: block;
     animation: steveBob 1s ease-in-out infinite;
   }
   @keyframes steveBob {
@@ -625,7 +620,7 @@
     </div>
     <div class="preview-container" id="previewContainer">
       <div class="nameplate" id="nameplate"></div>
-      <div class="steve-wrap" id="steveWrap"></div>
+      <img class="steve-3d" src="https://visage.surgeplay.com/full/300/8667ba71b85a4004af54457a9734eed7" alt="Steve">
     </div>
   </div>
 </div>
@@ -818,84 +813,8 @@
   function loadPreview() {
     const username = document.getElementById('previewInp').value.trim();
     if (!username) return;
-    const container   = document.getElementById('previewContainer');
-    const nameplateEl = document.getElementById('nameplate');
-    const steveWrap   = document.getElementById('steveWrap');
-
-    nameplateEl.textContent = username;
-    steveWrap.innerHTML = buildSteve();
-    container.classList.add('show');
-  }
-
-  function buildSteve() {
-    // Steve pixel art using a grid of colored divs (8px each)
-    // Each row is an array of color codes, '.' = transparent
-    // Canonical Minecraft Steve colors (matched to official texture)
-    const S = '#A97D64'; // skin (brown)
-    const SD= '#8B6349'; // skin shadow (under nose, beard area)
-    const H = '#3D2200'; // hair (dark brown)
-    const HL= '#6B3D2E'; // hair highlight
-    const C = '#6EBDD6'; // cyan shirt
-    const CD= '#4A9DB5'; // shirt shadow/cuff
-    const P = '#494697'; // dark blue-purple pants
-    const PD= '#333080'; // pants shadow
-    const G = '#6B6B6B'; // grey boots
-    const GD= '#4A4A4A'; // boot shadow
-    const EW= '#F0F0F0'; // eye white
-    const EP= '#3A3A8A'; // eye pupil (blue-purple)
-    const N = '#8B6349'; // nose (same as skin shadow)
-    const _ = 'transparent';
-
-    // 16-wide accurate Steve front view
-    const rows = [
-      // Hair top
-      [_,_,_,_,H,H,H,H,H,H,H,H,_,_,_,_],
-      [_,_,_,H,H,H,H,H,H,H,H,H,H,_,_,_],
-      [_,_,_,H,HL,H,H,H,H,H,H,HL,H,_,_,_],
-      // Face row 1 - hair fringe
-      [_,_,_,H,H,S,S,S,S,S,S,H,H,_,_,_],
-      // Face - forehead
-      [_,_,_,H,S,S,S,S,S,S,S,S,H,_,_,_],
-      // Eyes
-      [_,_,_,H,S,EW,EP,S,S,EW,EP,S,H,_,_,_],
-      [_,_,_,H,S,EW,EP,S,S,EW,EP,S,H,_,_,_],
-      // Nose
-      [_,_,_,H,S,S,S,N,S,S,S,S,H,_,_,_],
-      // Mouth/beard
-      [_,_,_,H,S,SD,S,S,S,S,SD,S,H,_,_,_],
-      [_,_,_,H,S,SD,SD,SD,SD,SD,SD,S,H,_,_,_],
-      [_,_,_,_,H,H,H,H,H,H,H,H,_,_,_,_],
-      // Body - cyan shirt with cuffs
-      [_,C,C,C,C,C,C,C,C,C,C,C,C,C,C,_],
-      [_,C,C,C,C,C,C,C,C,C,C,C,C,C,C,_],
-      [_,C,C,C,C,C,C,C,C,C,C,C,C,C,C,_],
-      [_,C,C,C,C,C,C,C,C,C,C,C,C,C,C,_],
-      [_,CD,C,C,C,C,C,C,C,C,C,C,C,C,CD,_],
-      [_,CD,C,C,C,C,C,C,C,C,C,C,C,C,CD,_],
-      [_,CD,CD,CD,CD,CD,CD,CD,CD,CD,CD,CD,CD,CD,CD,_],
-      // Legs - dark blue/purple pants
-      [_,_,P,P,P,P,P,_,_,P,P,P,P,P,_,_],
-      [_,_,P,P,P,P,P,_,_,P,P,P,P,P,_,_],
-      [_,_,P,P,P,P,P,_,_,P,P,P,P,P,_,_],
-      [_,_,P,P,P,P,P,_,_,P,P,P,P,P,_,_],
-      [_,_,PD,P,P,P,PD,_,_,PD,P,P,P,PD,_,_],
-      [_,_,PD,P,P,P,PD,_,_,PD,P,P,P,PD,_,_],
-      // Boots - grey
-      [_,_,G,G,G,G,G,_,_,G,G,G,G,G,_,_],
-      [_,_,GD,GD,GD,GD,GD,_,_,GD,GD,GD,GD,GD,_,_],
-    ];
-
-    const px = 10; // pixel size
-    let svg = `<svg width="${16*px}" height="${rows.length*px}" xmlns="http://www.w3.org/2000/svg" style="display:block">`;
-    rows.forEach((row, y) => {
-      row.forEach((color, x) => {
-        if (color !== 'transparent') {
-          svg += `<rect x="${x*px}" y="${y*px}" width="${px}" height="${px}" fill="${color}"/>`;
-        }
-      });
-    });
-    svg += '</svg>';
-    return svg;
+    document.getElementById('nameplate').textContent = username;
+    document.getElementById('previewContainer').classList.add('show');
   }
 
   // SKIN STEALER
