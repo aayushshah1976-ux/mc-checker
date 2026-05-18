@@ -55,6 +55,7 @@ export default async function handler(req, res) {
     res.setHeader('Content-Type', 'image/png');
     res.setHeader('Content-Disposition', `attachment; filename="${username}.png"`);
     res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('X-Player-UUID', uuid);
     return res.status(200).send(Buffer.from(buffer));
 
   } catch (err) {
