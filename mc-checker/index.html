@@ -377,11 +377,16 @@
     margin-bottom: 10px;
   }
 
-  /* Steve 3D */
-  .steve-3d {
-    width: 200px;
-    height: 200px;
-    display: block;
+  /* Pixel Steve */
+  .steve {
+    image-rendering: pixelated;
+    display: grid;
+    gap: 0;
+  }
+  .steve-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     animation: steveBob 1s ease-in-out infinite;
   }
   @keyframes steveBob {
@@ -501,10 +506,11 @@
   .skin-panel { display: flex; flex-direction: column; align-items: center; gap: 8px; }
   .skin-panel-label { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: var(--muted); letter-spacing: 1px; }
   .skin-3d {
-    width: 200px;
-    height: 200px;
     image-rendering: pixelated;
-    display: block;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    width: 256px;
+    height: 256px;
   }
   .skin-dl-btn {
     padding: 14px 24px;
@@ -620,7 +626,7 @@
     </div>
     <div class="preview-container" id="previewContainer">
       <div class="nameplate" id="nameplate"></div>
-      <img class="steve-3d" src="https://visage.surgeplay.com/full/300/8667ba71b85a4004af54457a9734eed7" alt="Steve">
+      <div class="steve-wrap" id="steveWrap"></div>
     </div>
   </div>
 </div>
@@ -813,8 +819,67 @@
   function loadPreview() {
     const username = document.getElementById('previewInp').value.trim();
     if (!username) return;
-    document.getElementById('nameplate').textContent = username;
-    document.getElementById('previewContainer').classList.add('show');
+    const container   = document.getElementById('previewContainer');
+    const nameplateEl = document.getElementById('nameplate');
+    const steveWrap   = document.getElementById('steveWrap');
+
+    nameplateEl.textContent = username;
+    steveWrap.innerHTML = buildSteve();
+    container.classList.add('show');
+  }
+
+  function buildSteve() {
+    const S = '#C7A076'; // skin
+    const H = '#512B07'; // hair/brown
+    const W = '#FFFFFF'; // white
+    const B = '#1B4FD6'; // blue shirt
+    const P = '#1A3BA8'; // blue pants
+    const K = '#1A1209'; // black shoe
+    const E = '#3559A7'; // eye
+    const _ = 'transparent';
+
+    const rows = [
+      [_,_,_,_,H,H,H,H,H,H,H,H,_,_,_,_],
+      [_,_,_,H,H,H,H,H,H,H,H,H,H,_,_,_],
+      [_,_,_,H,H,H,H,H,H,H,H,H,H,_,_,_],
+      [_,_,_,H,H,S,S,S,S,S,S,H,H,_,_,_],
+      [_,_,_,H,S,S,S,S,S,S,S,S,H,_,_,_],
+      [_,_,_,H,S,E,E,S,S,E,E,S,H,_,_,_],
+      [_,_,_,H,S,E,E,S,S,E,E,S,H,_,_,_],
+      [_,_,_,H,S,S,S,S,S,S,S,S,H,_,_,_],
+      [_,_,_,H,S,H,S,S,S,S,H,S,H,_,_,_],
+      [_,_,_,H,S,S,S,S,S,S,S,S,H,_,_,_],
+      [_,_,_,_,H,H,H,H,H,H,H,H,_,_,_,_],
+      // body
+      [_,B,B,B,B,B,B,B,B,B,B,B,B,B,B,_],
+      [_,B,B,B,B,B,B,B,B,B,B,B,B,B,B,_],
+      [_,B,B,B,B,B,B,B,B,B,B,B,B,B,B,_],
+      [_,B,B,B,B,B,B,B,B,B,B,B,B,B,B,_],
+      [_,B,B,B,B,B,B,B,B,B,B,B,B,B,B,_],
+      [_,B,B,B,B,B,B,B,B,B,B,B,B,B,B,_],
+      [_,B,B,B,B,B,B,B,B,B,B,B,B,B,B,_],
+      // legs
+      [_,_,P,P,P,P,P,_,_,P,P,P,P,P,_,_],
+      [_,_,P,P,P,P,P,_,_,P,P,P,P,P,_,_],
+      [_,_,P,P,P,P,P,_,_,P,P,P,P,P,_,_],
+      [_,_,P,P,P,P,P,_,_,P,P,P,P,P,_,_],
+      [_,_,P,P,P,P,P,_,_,P,P,P,P,P,_,_],
+      [_,_,P,P,P,P,P,_,_,P,P,P,P,P,_,_],
+      [_,_,K,K,K,K,K,_,_,K,K,K,K,K,_,_],
+      [_,_,K,K,K,K,K,_,_,K,K,K,K,K,_,_],
+    ];
+
+    const px = 10;
+    let svg = `<svg width="${16*px}" height="${rows.length*px}" xmlns="http://www.w3.org/2000/svg" style="display:block">`;
+    rows.forEach((row, y) => {
+      row.forEach((color, x) => {
+        if (color !== 'transparent') {
+          svg += `<rect x="${x*px}" y="${y*px}" width="${px}" height="${px}" fill="${color}"/>`;
+        }
+      });
+    });
+    svg += '</svg>';
+    return svg;
   }
 
   // SKIN STEALER
@@ -843,22 +908,14 @@
         errEl.textContent = data.error || 'Something went wrong.';
         errEl.style.display = 'block';
       } else {
-        const uuid = res.headers.get('X-Player-UUID');
         const blob = await res.blob();
         const url  = URL.createObjectURL(blob);
 
-        // 3D full body render from Visage using the UUID
-        img3d.src = `https://visage.surgeplay.com/full/400/${uuid}`;
-        img3d.onload = () => {
-          previews.style.display = 'flex';
-        };
-        img3d.onerror = () => {
-          // Fallback: show flat skin if Visage fails
-          img3d.src = url;
-          previews.style.display = 'flex';
-        };
+        // Display flat skin PNG directly
+        img3d.src = url;
+        img3d.onload = () => { previews.style.display = 'flex'; };
 
-        // Download still uses the raw skin PNG from our proxy
+        // Download link
         dlBtn.href = url;
         dlBtn.download = `${username}.png`;
         dlBtn.textContent = `⬇ DOWNLOAD ${username.toUpperCase()}.PNG`;
