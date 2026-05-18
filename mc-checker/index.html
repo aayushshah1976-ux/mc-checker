@@ -505,8 +505,12 @@
   }
   .skin-panel { display: flex; flex-direction: column; align-items: center; gap: 8px; }
   .skin-panel-label { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: var(--muted); letter-spacing: 1px; }
-  .skin-raw { image-rendering: pixelated; border: 1px solid var(--border); border-radius: 6px; width: 128px; height: 128px; }
-  .skin-face { image-rendering: pixelated; border: 1px solid var(--border); border-radius: 6px; width: 80px; height: 80px; }
+  .skin-3d {
+    width: 200px;
+    height: 200px;
+    image-rendering: pixelated;
+    display: block;
+  }
   .skin-dl-btn {
     padding: 14px 24px;
     background: rgba(74,222,128,0.1);
@@ -639,14 +643,7 @@
     <div class="skin-result" id="skinResult">
       <div class="skin-err" id="skinErr" style="display:none"></div>
       <div class="skin-preview-wrap" id="skinPreviews">
-        <div class="skin-panel">
-          <div class="skin-panel-label">FULL SKIN (64×64)</div>
-          <canvas class="skin-raw" id="skinRawCanvas" width="64" height="64"></canvas>
-        </div>
-        <div class="skin-panel">
-          <div class="skin-panel-label">FACE</div>
-          <canvas class="skin-face" id="skinFaceCanvas" width="8" height="8"></canvas>
-        </div>
+        <img class="skin-3d" id="skin3dImg" src="" alt="3D skin render">
       </div>
       <a class="skin-dl-btn" id="skinDlBtn" download="">⬇ DOWNLOAD SKIN</a>
     </div>
@@ -905,11 +902,12 @@
   async function fetchSkin() {
     const username = document.getElementById('skinInp').value.trim();
     if (!username) return;
-    const btn       = document.getElementById('skinBtn');
-    const resultEl  = document.getElementById('skinResult');
-    const errEl     = document.getElementById('skinErr');
-    const previews  = document.getElementById('skinPreviews');
-    const dlBtn     = document.getElementById('skinDlBtn');
+    const btn      = document.getElementById('skinBtn');
+    const resultEl = document.getElementById('skinResult');
+    const errEl    = document.getElementById('skinErr');
+    const previews = document.getElementById('skinPreviews');
+    const dlBtn    = document.getElementById('skinDlBtn');
+    const img3d    = document.getElementById('skin3dImg');
 
     btn.disabled = true;
     btn.textContent = '...';
@@ -926,34 +924,26 @@
         errEl.textContent = data.error || 'Something went wrong.';
         errEl.style.display = 'block';
       } else {
-        // Got the image blob back from our proxy
+        const uuid = res.headers.get('X-Player-UUID');
         const blob = await res.blob();
         const url  = URL.createObjectURL(blob);
 
-        // Draw full skin onto canvas
-        const img = new Image();
-        img.onload = () => {
-          // Full skin canvas (64x64 -> displayed at 128x128 via CSS)
-          const rawCanvas  = document.getElementById('skinRawCanvas');
-          const rawCtx     = rawCanvas.getContext('2d');
-          rawCtx.imageSmoothingEnabled = false;
-          rawCtx.drawImage(img, 0, 0, 64, 64);
-
-          // Face canvas: face layer is at x=8,y=8, 8x8 pixels on the skin texture
-          const faceCanvas = document.getElementById('skinFaceCanvas');
-          const faceCtx    = faceCanvas.getContext('2d');
-          faceCtx.imageSmoothingEnabled = false;
-          faceCtx.drawImage(img, 8, 8, 8, 8, 0, 0, 8, 8);
-
-          // Download link
-          dlBtn.href = url;
-          dlBtn.download = `${username}.png`;
-          dlBtn.textContent = `⬇ DOWNLOAD ${username.toUpperCase()}.PNG`;
-
+        // 3D full body render from Visage using the UUID
+        img3d.src = `https://visage.surgeplay.com/full/400/${uuid}`;
+        img3d.onload = () => {
           previews.style.display = 'flex';
-          dlBtn.style.display = 'inline-block';
         };
-        img.src = url;
+        img3d.onerror = () => {
+          // Fallback: show flat skin if Visage fails
+          img3d.src = url;
+          previews.style.display = 'flex';
+        };
+
+        // Download still uses the raw skin PNG from our proxy
+        dlBtn.href = url;
+        dlBtn.download = `${username}.png`;
+        dlBtn.textContent = `⬇ DOWNLOAD ${username.toUpperCase()}.PNG`;
+        dlBtn.style.display = 'inline-block';
       }
     } catch {
       errEl.textContent = 'Network error — try again.';
