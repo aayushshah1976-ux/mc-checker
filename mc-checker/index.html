@@ -564,6 +564,9 @@
     margin-top: 6px;
     padding-top: 10px;
     border-top: 1px solid var(--border);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .sniper-display {
@@ -822,7 +825,7 @@
 <!-- NAME SNIPER -->
 <div class="overlay" id="sniperOverlay">
   <div class="popup">
-    <button class="close-btn" onclick="stopSniper(); closeOverlay('sniperOverlay')">✕ CLOSE</button>
+    <button class="close-btn" onclick="closeOverlay('sniperOverlay')">✕ CLOSE</button>
     <div class="popup-title">NAME SNIPER</div>
     <div class="popup-sub">Scans random 3-character usernames until one is available.</div>
 
