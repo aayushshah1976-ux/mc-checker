@@ -530,6 +530,167 @@
   .skin-dl-btn:hover { background: rgba(74,222,128,0.2); color: #fff; }
   .skin-err { font-family: 'Share Tech Mono', monospace; font-size: 14px; color: var(--red); letter-spacing: 1px; }
 
+  /* NAME SNIPER */
+  .sniper-how {
+    background: rgba(74,222,128,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .sniper-how-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 9px;
+    color: var(--green);
+    letter-spacing: 2px;
+    margin-bottom: 4px;
+  }
+  .sniper-how-step {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--text);
+    letter-spacing: 0.5px;
+    line-height: 1.5;
+  }
+  .sniper-how-step span { color: var(--green); }
+  .sniper-notice {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: #f59e0b;
+    letter-spacing: 1px;
+    margin-top: 6px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+  }
+
+  .sniper-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 0 8px;
+  }
+  .sniper-current {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 26px;
+    color: var(--muted);
+    letter-spacing: 4px;
+    min-height: 40px;
+    transition: color 0.15s;
+  }
+  .sniper-current.checking { color: #fff; animation: sniperFlick 0.15s ease; }
+  @keyframes sniperFlick { 0% { opacity: 0.3; } 100% { opacity: 1; } }
+  .sniper-counter {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  .sniper-status {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 1px;
+    min-height: 20px;
+  }
+  .sniper-btn {
+    width: 100%;
+    padding: 18px;
+    background: rgba(74,222,128,0.1);
+    border: 1px solid var(--border-bright);
+    border-radius: 10px;
+    color: var(--green);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 12px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+  }
+  .sniper-btn:hover { background: rgba(74,222,128,0.2); color: #fff; }
+  .sniper-btn.stop { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.35); color: #f87171; }
+  .sniper-btn.stop:hover { background: rgba(248,113,113,0.2); color: #fff; }
+
+  /* SNIPER FOUND POPUP */
+  .sniper-found-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.2s ease;
+  }
+  .sniper-found-overlay.show { display: flex; }
+  .sniper-found-box {
+    background: #0a1f0e;
+    border: 2px solid var(--green);
+    border-radius: 16px;
+    padding: 40px 36px;
+    width: 95%;
+    max-width: 440px;
+    text-align: center;
+    box-shadow: 0 0 60px rgba(74,222,128,0.25);
+    animation: popIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+  }
+  .sniper-found-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    color: var(--green);
+    letter-spacing: 3px;
+  }
+  .sniper-found-name {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 28px;
+    color: #fff;
+    letter-spacing: 4px;
+    text-shadow: 0 0 30px rgba(74,222,128,0.6);
+  }
+  .sniper-found-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+  .sniper-register-btn {
+    padding: 16px 32px;
+    background: var(--green);
+    border: none;
+    border-radius: 10px;
+    color: #000;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: opacity 0.2s;
+    margin-top: 4px;
+  }
+  .sniper-register-btn:hover { opacity: 0.85; }
+  .sniper-found-close {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--muted);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 1px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .sniper-found-close:hover { border-color: var(--border-bright); color: #fff; }
+
 </style>
 </head>
 <body>
@@ -582,6 +743,13 @@
         <div>
           <div class="tool-name">SKIN STEALER</div>
           <div class="tool-desc">Download any player's current skin texture</div>
+        </div>
+        <div class="tool-arrow">›</div>
+      </div>
+      <div class="tool-item" onclick="openSniper()">
+        <div>
+          <div class="tool-name">NAME SNIPER</div>
+          <div class="tool-desc">Auto-scans random 3-char names until one is free</div>
         </div>
         <div class="tool-arrow">›</div>
       </div>
@@ -651,6 +819,43 @@
   </div>
 </div>
 
+<!-- NAME SNIPER -->
+<div class="overlay" id="sniperOverlay">
+  <div class="popup">
+    <button class="close-btn" onclick="stopSniper(); closeOverlay('sniperOverlay')">✕ CLOSE</button>
+    <div class="popup-title">NAME SNIPER</div>
+    <div class="popup-sub">Scans random 3-character usernames until one is available.</div>
+
+    <div class="sniper-how">
+      <div class="sniper-how-title">HOW IT WORKS</div>
+      <div class="sniper-how-step">① Generates a random 3-character username</div>
+      <div class="sniper-how-step">② Checks it against <span>Mojang's API</span></div>
+      <div class="sniper-how-step">③ If taken, moves to the next one instantly</div>
+      <div class="sniper-how-step">④ If <span>available</span> — a popup appears with a register link</div>
+      <div class="sniper-notice">⚠ KEEP YOUR TAB OPEN — sniper stops if you close it</div>
+    </div>
+
+    <div class="sniper-display">
+      <div class="sniper-current" id="sniperCurrent">---</div>
+      <div class="sniper-counter" id="sniperCounter">0 checked</div>
+      <div class="sniper-status" id="sniperStatus">Press start to begin scanning</div>
+    </div>
+
+    <button class="sniper-btn" id="sniperBtn" onclick="toggleSniper()">▶ START SCANNING</button>
+  </div>
+</div>
+
+<!-- SNIPER FOUND POPUP -->
+<div class="sniper-found-overlay" id="sniperFoundOverlay">
+  <div class="sniper-found-box">
+    <div class="sniper-found-label">✦ AVAILABLE NAME FOUND ✦</div>
+    <div class="sniper-found-name" id="sniperFoundName"></div>
+    <div class="sniper-found-sub">Register it before someone else does!</div>
+    <a class="sniper-register-btn" id="sniperRegisterBtn" href="https://www.minecraft.net/en-us/msaprofile/mygames/editprofile" target="_blank" rel="noopener">▶ REGISTER NOW</a>
+    <button class="sniper-found-close" onclick="closeSniperFound()">CLOSE &amp; KEEP SCANNING</button>
+  </div>
+</div>
+
 <!-- AD -->
 <div class="ad-overlay" id="adOverlay">
   <div class="ad-box">
@@ -712,6 +917,7 @@
   function openNameGen() { closeOverlay('toolsOverlay'); document.getElementById('nameGenOverlay').classList.add('show'); }
   function openPreview() { closeOverlay('toolsOverlay'); document.getElementById('previewOverlay').classList.add('show'); }
   function openSkinStealer() { closeOverlay('toolsOverlay'); document.getElementById('skinOverlay').classList.add('show'); }
+  function openSniper()  { closeOverlay('toolsOverlay'); document.getElementById('sniperOverlay').classList.add('show'); }
   function closeOverlay(id) { document.getElementById(id).classList.remove('show'); }
 
   document.querySelectorAll('.overlay').forEach(o => {
@@ -928,6 +1134,96 @@
       btn.disabled = false;
       btn.textContent = '▶ FETCH';
     }
+  }
+
+  // NAME SNIPER
+  let sniperRunning  = false;
+  let sniperCount    = 0;
+  let sniperStopped  = false;
+
+  const SNIPER_CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789';
+
+  function randomThreeChar() {
+    let name = '';
+    for (let i = 0; i < 3; i++) {
+      name += SNIPER_CHARS[Math.floor(Math.random() * SNIPER_CHARS.length)];
+    }
+    return name;
+  }
+
+  function toggleSniper() {
+    if (sniperRunning) {
+      stopSniper();
+    } else {
+      startSniper();
+    }
+  }
+
+  function startSniper() {
+    sniperRunning = true;
+    sniperStopped = false;
+    const btn = document.getElementById('sniperBtn');
+    btn.textContent = '■ STOP SCANNING';
+    btn.classList.add('stop');
+    document.getElementById('sniperStatus').textContent = 'Scanning...';
+    runSniperLoop();
+  }
+
+  function stopSniper() {
+    sniperRunning = false;
+    sniperStopped = true;
+    const btn = document.getElementById('sniperBtn');
+    btn.textContent = '▶ START SCANNING';
+    btn.classList.remove('stop');
+    document.getElementById('sniperStatus').textContent = 'Stopped. Press start to resume.';
+    document.getElementById('sniperCurrent').classList.remove('checking');
+  }
+
+  async function runSniperLoop() {
+    while (sniperRunning) {
+      const name = randomThreeChar();
+
+      // Update display
+      const currentEl = document.getElementById('sniperCurrent');
+      currentEl.textContent = name;
+      currentEl.classList.remove('checking');
+      void currentEl.offsetWidth; // force reflow for animation
+      currentEl.classList.add('checking');
+
+      sniperCount++;
+      document.getElementById('sniperCounter').textContent = `${sniperCount.toLocaleString()} checked`;
+      document.getElementById('sniperStatus').textContent = 'Checking...';
+
+      try {
+        const res  = await fetch(`/api/check?username=${encodeURIComponent(name)}`);
+        const data = await res.json();
+
+        if (data.available === true) {
+          // Found one — show popup, pause scanning
+          stopSniper();
+          showSniperFound(name);
+          return;
+        }
+      } catch {
+        // Network hiccup — just keep going
+      }
+
+      document.getElementById('sniperStatus').textContent = 'Taken — trying next...';
+
+      // Delay between checks to avoid Mojang rate limiting
+      await sleep(750);
+    }
+  }
+
+  function showSniperFound(name) {
+    document.getElementById('sniperFoundName').textContent = name;
+    document.getElementById('sniperFoundOverlay').classList.add('show');
+  }
+
+  function closeSniperFound() {
+    document.getElementById('sniperFoundOverlay').classList.remove('show');
+    // Resume scanning automatically
+    startSniper();
   }
 
   // HELPERS
