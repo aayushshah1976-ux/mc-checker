@@ -694,6 +694,112 @@
   }
   .sniper-found-close:hover { border-color: var(--border-bright); color: #fff; }
 
+  /* CROSSHAIR DESIGNER */
+  .crosshair-wrap {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .crosshair-controls {
+    flex: 1;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .crosshair-preview-panel {
+    flex-shrink: 0;
+    width: 200px;
+    height: 200px;
+    background: #1a2a1a;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .crosshair-preview-panel canvas {
+    image-rendering: pixelated;
+  }
+  .crosshair-control {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .crosshair-label {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+  .crosshair-range {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    outline: none;
+  }
+  .crosshair-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    background: var(--green);
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  .crosshair-color {
+    width: 48px;
+    height: 32px;
+    border: 1px solid var(--border-bright);
+    border-radius: 6px;
+    background: none;
+    cursor: pointer;
+    padding: 2px;
+  }
+  .crosshair-row { display: flex; align-items: center; gap: 12px; }
+  .crosshair-val {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: var(--green);
+    min-width: 28px;
+    text-align: right;
+  }
+  .crosshair-dl-btn {
+    width: 100%;
+    padding: 16px;
+    background: rgba(74,222,128,0.1);
+    border: 1px solid var(--border-bright);
+    border-radius: 10px;
+    color: var(--green);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 4px;
+  }
+  .crosshair-dl-btn:hover { background: rgba(74,222,128,0.2); color: #fff; }
+  .crosshair-style-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .crosshair-style-btn {
+    padding: 8px 14px;
+    background: rgba(74,222,128,0.05);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--muted);
+    font-family: 'Press Start 2P', monospace;
+    font-size: 8px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .crosshair-style-btn.active { background: rgba(74,222,128,0.15); border-color: var(--border-bright); color: var(--green); }
+
 </style>
 </head>
 <body>
@@ -753,6 +859,13 @@
         <div>
           <div class="tool-name">NAME SNIPER</div>
           <div class="tool-desc">Auto-scans random 3-char names until one is free</div>
+        </div>
+        <div class="tool-arrow">›</div>
+      </div>
+      <div class="tool-item" onclick="openCrosshair()">
+        <div>
+          <div class="tool-name">CROSSHAIR DESIGNER</div>
+          <div class="tool-desc">Design a custom crosshair &amp; export as PNG</div>
         </div>
         <div class="tool-arrow">›</div>
       </div>
@@ -859,6 +972,85 @@
   </div>
 </div>
 
+<!-- CROSSHAIR DESIGNER -->
+<div class="overlay" id="crosshairOverlay">
+  <div class="popup">
+    <button class="close-btn" onclick="closeOverlay('crosshairOverlay')">✕ CLOSE</button>
+    <div class="popup-title">CROSSHAIR DESIGNER</div>
+    <div class="popup-sub">Design your crosshair and export it as a PNG for your resource pack.</div>
+
+    <div class="crosshair-wrap">
+      <!-- Controls -->
+      <div class="crosshair-controls">
+
+        <div class="crosshair-control">
+          <div class="crosshair-label">STYLE</div>
+          <div class="crosshair-style-row">
+            <button class="crosshair-style-btn active" id="styleDefault" onclick="setCrosshairStyle('default')">CROSS</button>
+            <button class="crosshair-style-btn" id="styleDot" onclick="setCrosshairStyle('dot')">DOT</button>
+            <button class="crosshair-style-btn" id="styleCircle" onclick="setCrosshairStyle('circle')">CIRCLE</button>
+            <button class="crosshair-style-btn" id="styleX" onclick="setCrosshairStyle('x')">X</button>
+          </div>
+        </div>
+
+        <div class="crosshair-control">
+          <div class="crosshair-label">SIZE</div>
+          <div class="crosshair-row">
+            <input type="range" class="crosshair-range" id="chSize" min="1" max="10" value="4" oninput="updateCrosshair()">
+            <span class="crosshair-val" id="chSizeVal">4</span>
+          </div>
+        </div>
+
+        <div class="crosshair-control">
+          <div class="crosshair-label">THICKNESS</div>
+          <div class="crosshair-row">
+            <input type="range" class="crosshair-range" id="chThick" min="1" max="5" value="2" oninput="updateCrosshair()">
+            <span class="crosshair-val" id="chThickVal">2</span>
+          </div>
+        </div>
+
+        <div class="crosshair-control">
+          <div class="crosshair-label">GAP</div>
+          <div class="crosshair-row">
+            <input type="range" class="crosshair-range" id="chGap" min="0" max="8" value="2" oninput="updateCrosshair()">
+            <span class="crosshair-val" id="chGapVal">2</span>
+          </div>
+        </div>
+
+        <div class="crosshair-control">
+          <div class="crosshair-label">OPACITY</div>
+          <div class="crosshair-row">
+            <input type="range" class="crosshair-range" id="chOpacity" min="10" max="100" value="100" oninput="updateCrosshair()">
+            <span class="crosshair-val" id="chOpacityVal">100%</span>
+          </div>
+        </div>
+
+        <div class="crosshair-control">
+          <div class="crosshair-label">COLOUR</div>
+          <div class="crosshair-row">
+            <input type="color" class="crosshair-color" id="chColor" value="#ffffff" oninput="updateCrosshair()">
+          </div>
+        </div>
+
+        <div class="crosshair-control">
+          <div class="crosshair-label">OUTLINE</div>
+          <div class="crosshair-row">
+            <input type="range" class="crosshair-range" id="chOutline" min="0" max="3" value="1" oninput="updateCrosshair()">
+            <span class="crosshair-val" id="chOutlineVal">1</span>
+          </div>
+        </div>
+
+        <button class="crosshair-dl-btn" onclick="downloadCrosshair()">⬇ EXPORT AS PNG</button>
+      </div>
+
+      <!-- Preview -->
+      <div class="crosshair-preview-panel">
+        <canvas id="crosshairCanvas" width="16" height="16" style="width:160px;height:160px;"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- AD -->
 <div class="ad-overlay" id="adOverlay">
   <div class="ad-box" style="padding:0;overflow:hidden;border-radius:14px;max-width:640px;">
@@ -925,6 +1117,7 @@
   function openPreview() { closeOverlay('toolsOverlay'); document.getElementById('previewOverlay').classList.add('show'); }
   function openSkinStealer() { closeOverlay('toolsOverlay'); document.getElementById('skinOverlay').classList.add('show'); }
   function openSniper()  { closeOverlay('toolsOverlay'); document.getElementById('sniperOverlay').classList.add('show'); }
+  function openCrosshair() { closeOverlay('toolsOverlay'); document.getElementById('crosshairOverlay').classList.add('show'); updateCrosshair(); }
   function closeOverlay(id) { document.getElementById(id).classList.remove('show'); }
 
   document.querySelectorAll('.overlay').forEach(o => {
@@ -1231,6 +1424,150 @@
     document.getElementById('sniperFoundOverlay').classList.remove('show');
     // Resume scanning automatically
     startSniper();
+  }
+
+  // CROSSHAIR DESIGNER
+  let crosshairStyle = 'default';
+
+  function setCrosshairStyle(style) {
+    crosshairStyle = style;
+    ['default','dot','circle','x'].forEach(s => {
+      const btn = document.getElementById('style' + s.charAt(0).toUpperCase() + s.slice(1));
+      if (btn) btn.classList.toggle('active', s === style);
+    });
+    updateCrosshair();
+  }
+
+  function updateCrosshair() {
+    const size    = parseInt(document.getElementById('chSize').value);
+    const thick   = parseInt(document.getElementById('chThick').value);
+    const gap     = parseInt(document.getElementById('chGap').value);
+    const opacity = parseInt(document.getElementById('chOpacity').value) / 100;
+    const color   = document.getElementById('chColor').value;
+    const outline = parseInt(document.getElementById('chOutline').value);
+
+    document.getElementById('chSizeVal').textContent    = size;
+    document.getElementById('chThickVal').textContent   = thick;
+    document.getElementById('chGapVal').textContent     = gap;
+    document.getElementById('chOpacityVal').textContent = Math.round(opacity * 100) + '%';
+    document.getElementById('chOutlineVal').textContent = outline;
+
+    const dim    = (size + gap + outline) * 2 + thick + 2;
+    const canvas = document.getElementById('crosshairCanvas');
+    canvas.width  = dim;
+    canvas.height = dim;
+    const ctx    = canvas.getContext('2d');
+    ctx.clearRect(0, 0, dim, dim);
+
+    const cx = Math.floor(dim / 2);
+    const cy = Math.floor(dim / 2);
+
+    // Parse color to rgba
+    const r = parseInt(color.slice(1,3), 16);
+    const g = parseInt(color.slice(3,5), 16);
+    const b = parseInt(color.slice(5,7), 16);
+
+    function drawPixel(x, y, col, a) {
+      ctx.fillStyle = col;
+      ctx.globalAlpha = a;
+      ctx.fillRect(x, y, 1, 1);
+    }
+
+    function hexToRgba(hex, a) {
+      return `rgba(${parseInt(hex.slice(1,3),16)},${parseInt(hex.slice(3,5),16)},${parseInt(hex.slice(5,7),16)},${a})`;
+    }
+
+    // Draw outline first (black pixels around crosshair)
+    if (outline > 0) {
+      ctx.globalAlpha = opacity;
+      ctx.fillStyle = 'rgba(0,0,0,1)';
+      drawShape(ctx, crosshairStyle, cx, cy, size, thick, gap, outline, true, opacity);
+    }
+
+    // Draw main crosshair
+    ctx.globalAlpha = opacity;
+    ctx.fillStyle = color;
+    drawShape(ctx, crosshairStyle, cx, cy, size, thick, gap, 0, false, opacity);
+
+    ctx.globalAlpha = 1;
+  }
+
+  function drawShape(ctx, style, cx, cy, size, thick, gap, outlineOffset, isOutline, opacity) {
+    const col = isOutline ? 'rgba(0,0,0,1)' : ctx.fillStyle;
+    const o   = outlineOffset;
+
+    if (style === 'default') {
+      // Horizontal arms
+      for (let arm = -1; arm <= 1; arm += 2) {
+        for (let t = 0; t < thick; t++) {
+          for (let s = gap + o; s <= gap + size + o; s++) {
+            ctx.fillStyle = col;
+            ctx.globalAlpha = opacity;
+            ctx.fillRect(cx + arm * s, cy - Math.floor(thick/2) + t - o * (t === 0 ? 1 : 0), 1, 1);
+          }
+        }
+      }
+      // Vertical arms
+      for (let arm = -1; arm <= 1; arm += 2) {
+        for (let t = 0; t < thick; t++) {
+          for (let s = gap + o; s <= gap + size + o; s++) {
+            ctx.fillStyle = col;
+            ctx.globalAlpha = opacity;
+            ctx.fillRect(cx - Math.floor(thick/2) + t - o * (t === 0 ? 1 : 0), cy + arm * s, 1, 1);
+          }
+        }
+      }
+      // Centre dot
+      for (let tx = 0; tx < thick; tx++) {
+        for (let ty = 0; ty < thick; ty++) {
+          ctx.fillStyle = col;
+          ctx.fillRect(cx - Math.floor(thick/2) + tx, cy - Math.floor(thick/2) + ty, 1, 1);
+        }
+      }
+
+    } else if (style === 'dot') {
+      const r = size + o;
+      for (let tx = -r; tx <= r; tx++) {
+        for (let ty = -r; ty <= r; ty++) {
+          if (tx*tx + ty*ty <= r*r) {
+            ctx.fillStyle = col;
+            ctx.fillRect(cx + tx, cy + ty, 1, 1);
+          }
+        }
+      }
+
+    } else if (style === 'circle') {
+      const ro = size + o;
+      const ri = Math.max(0, size - thick - o);
+      for (let tx = -ro; tx <= ro; tx++) {
+        for (let ty = -ro; ty <= ro; ty++) {
+          const d = tx*tx + ty*ty;
+          if (d <= ro*ro && d >= ri*ri) {
+            ctx.fillStyle = col;
+            ctx.fillRect(cx + tx, cy + ty, 1, 1);
+          }
+        }
+      }
+
+    } else if (style === 'x') {
+      for (let s = gap + o; s <= gap + size + o; s++) {
+        for (let t = 0; t < thick; t++) {
+          ctx.fillStyle = col;
+          ctx.fillRect(cx + s - t, cy + s, 1, 1);
+          ctx.fillRect(cx - s + t, cy + s, 1, 1);
+          ctx.fillRect(cx + s - t, cy - s, 1, 1);
+          ctx.fillRect(cx - s + t, cy - s, 1, 1);
+        }
+      }
+    }
+  }
+
+  function downloadCrosshair() {
+    const canvas = document.getElementById('crosshairCanvas');
+    const link   = document.createElement('a');
+    link.download = 'crosshair.png';
+    link.href     = canvas.toDataURL('image/png');
+    link.click();
   }
 
   // HELPERS
